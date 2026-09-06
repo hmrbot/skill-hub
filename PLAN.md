@@ -1,5 +1,7 @@
 # پلن اجرای hmrbot Hub
 
+> **🟢 `https://hub.hmrbot.com` زنده است (۲۰۲۶-۰۹-۰۶).** فازهای ۰ تا ۵ کامل و deploy شده. Pages فعال، دامنهٔ سفارشی + گواهی، Cloudflare Proxied، SSL Full، Always-Use-HTTPS. باقی‌مانده (بلاکر نیست): claim نام `hmrbot` روی npm + `NPM_TOKEN` برای انتشار CLI.
+>
 > نسخه ۲ — ۶ سپتامبر ۲۰۲۶ (تصمیم‌های ساختار، دامنه و میزبانی قفل شد)
 > این پوشه (`D:\.hmr.com\skill-hub`) نسخهٔ کاری محلیِ مخزن `github.com/hmrbot/skill-hub` است.
 > متن فارسی؛ همهٔ شناسه‌های فنی به Latin.
