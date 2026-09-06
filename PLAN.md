@@ -416,12 +416,24 @@ npx hmrbot open [skill|prompt|software]    # باز کردن کاتالوگ در
 
 **باقی‌ماندهٔ فاز ۲:** push + فعال‌سازی Pages در تنظیمات GitHub + سوییچ CNAME به Proxied (بخش ۹) + public کردن مخزن.
 
-### فاز ۳ — CLI `npx hmrbot` (~۳–۵ روز)
+### فاز ۳ — CLI `npx hmrbot`  ✅ محلی (۲۰۲۶-۰۹-۰۶) — commit `0c37ebe`
 
-1. `cli/` — `skill add|search|list|update|remove`, `registry`, `open`.
-2. تشخیص agent + مقصد + `.hmrbot-meta.json`.
-3. publish به npm؛ تست `npx hmrbot skill add rag-basics` روی کانتینر تمیز.
-4. `.claude-plugin/marketplace.json`.
+1. ✅ `cli/` — پکیج `hmrbot` (zero-dependency، Node ≥ ۲۰): `skill add|remove|update|search|list`، `registry`، `open`.
+2. ✅ تشخیص مقصد (`--dir`، `--agent`، auto-detect `.claude`/`.agents`/`.opencode`) + `.hmrbot-meta.json` (source + version) برای update/remove امن.
+3. ✅ `add` فولدر skill را با GitHub Contents API (recursive) دانلود می‌کند؛ برای first-party می‌تواند از checkout محلی هم کپی کند.
+4. ✅ build با tsup → `dist/index.js` (shebang). typecheck + build در `validate.yml`.
+5. ✅ `name` روی npm آزاد است (`hmrbot`) — رزرو/انتشار مانده.
+6. ✅ تست محلی: همهٔ دستورها؛ دانلود recursive واقعی با `anthropics/skills/skill-creator` (۱۸ فایل) تأیید شد. دانلود first-party تا public شدن مخزن تست‌نشده (منطق یکی است).
+7. ⬜ `.claude-plugin/marketplace.json` — پایه‌اش هست؛ در فاز ۴ کامل می‌شود.
+8. ⬜ publish به npm (نیاز به claim نام + `NPM_TOKEN` + public شدن مخزن).
+
+**CI:** `validate.yml` سبز است (Node 22 — pnpm 11.9 نیاز دارد). `build-deploy.yml` — job `build` سبز، job `deploy` تا فعال‌شدن Pages fail می‌دهد (۴۰۴).
+
+**باقی‌ماندهٔ فاز ۲+۳ — همه admin روی مخزن (wikigoo فقط write دارد):**
+- فعال‌سازی Pages: Settings → Pages → Source: GitHub Actions
+- public کردن مخزن
+- بعدش: deploy خودکار می‌شود → `hub.hmrbot.com` بالا می‌آید → CNAME به Proxied + SSL Full
+- claim نام `hmrbot` روی npm + افزودن `NPM_TOKEN` برای انتشار CLI
 
 ### فاز ۴ — federation (~۳–۵ روز)
 
