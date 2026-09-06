@@ -435,13 +435,22 @@ npx hmrbot open [skill|prompt|software]    # باز کردن کاتالوگ در
 - بعدش: deploy خودکار می‌شود → `hub.hmrbot.com` بالا می‌آید → CNAME به Proxied + SSL Full
 - claim نام `hmrbot` روی npm + افزودن `NPM_TOKEN` برای انتشار CLI
 
-### فاز ۴ — federation (~۳–۵ روز)
+### فاز ۴ — federation  ✅ (۲۰۲۶-۰۹-۰۶) — commit `486efa0`
 
-1. `packages/registry` را گسترش بده: fetch از GitHub API (`microsoft` اول، بعد `anthropic` با فیلتر per-skill).
-2. منطق فیلتر license + لاگ رد‌شده‌ها.
-3. `federation-sync.yml` (cron).
-4. کارت‌های فدرال در کاتالوگ با badge منبع/license.
-5. `skill add` برای slugهای فدرال از upstream دانلود کند.
+1. ✅ `packages/registry/src/federation.ts` — harvester مستقل از منبع: `sources.yaml` را می‌خواند، برای هر source فعال همهٔ `*/SKILL.md` زیر `path` را با git trees API پیدا می‌کند، بعد frontmatter + license را از raw CDN با concurrency محدود می‌کشد (~۳ ثانیه برای anthropics/skills).
+2. ✅ فیلتر license: `repo` (کل مخزن) یا `per-skill` (`LICENSE.txt` را classify می‌کند: Apache-2.0 / MIT / proprietary / unknown). هرچه در `license_allow` نباشد drop + log می‌شود.
+3. ✅ `.github/workflows/federation-sync.yml` — cron روزانه، اگر `registry.json` عوض شد commit می‌کند.
+4. ✅ کارت‌های فدرال در کاتالوگ با badge منبع + license؛ لینک عنوان به upstream repo (`↗`). صفحهٔ جزئیات، sitemap و بخش اصلی `llms.txt` فقط first-party؛ فدرال‌ها در بخش «Federated» با لینک upstream.
+5. ✅ `skill add` برای slug فدرال از upstream دانلود می‌کند (منطقش از فاز ۳ آماده بود).
+
+**فعلاً فعال:** `anthropic` (۱۴ skill؛ `pdf/docx/pptx/xlsx` exclude، `doc-coauthoring` به‌خاطر نبود license drop). **`microsoft` خاموش** — ~۱۸۰ skill مخصوص Azure کاتالوگ را غرق می‌کند؛ federation برایش کار می‌کند (تست شد)، با `include:` می‌شود زیرمجموعه‌اش را آورد.
+
+**کاتالوگ الان ۱۷ skill دارد** (۳ hmrbot + ۱۴ anthropic). CI `validate` + `build-deploy/build` سبز. فقط `deploy` تا فعال‌شدن Pages می‌ماند.
+
+**باقی‌مانده (همه admin مخزن — wikigoo فقط write):**
+- Settings → Pages → Source: GitHub Actions  ← تنها بلاکر برای زنده‌شدن `hub.hmrbot.com`
+- claim نام `hmrbot` روی npm + secret `NPM_TOKEN` برای انتشار CLI
+- بعدش: تأیید سایت + CNAME به Proxied + SSL Full
 
 ### فاز ۵ — Prompt + تثبیت (~۳–۵ روز)
 
