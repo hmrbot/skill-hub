@@ -400,14 +400,21 @@ npx hmrbot open [skill|prompt|software]    # باز کردن کاتالوگ در
 
 **باقی‌مانده‌ی فاز ۱:** فقط push بعد از احراز هویت.
 
-### فاز ۲ — کاتالوگ وب (~۳–۵ روز)
+### فاز ۲ — کاتالوگ وب  ✅ محلی (۲۰۲۶-۰۹-۰۶) — commit `68898c2`
 
-1. `site/` را از `microsoft/skills/docs-site` بردار؛ همهٔ توکن/متن را hmrbot کن.
-2. `packages/registry` — فعلاً فقط اسکن محلی → `registry.json`.
-3. صفحات `/`, `/skill`, `/skill/[slug]`, `llms.txt`, `sitemap`.
-4. جست‌وجو/فیلتر سمت‌کلاینت.
-5. `site/public/CNAME` + تنظیمات بخش ۹ + `build-deploy.yml` → `hub.hmrbot.com` زنده.
-6. مخزن را public کن.
+1. ✅ `site/` — Astro static، RTL فارسی، Vazirmatn (self-hosted via `@fontsource-variable`). طراحی/توکن‌های hmrbot، نه microsoft.
+2. ✅ سایت `registry.json` کامیت‌شده را می‌خواند؛ content collection فقط برای رندر بدنهٔ `SKILL.md` در صفحهٔ جزئیات.
+3. ✅ صفحات: `/`، `/skill`، `/skill/[slug]`، `/registry.json`، `/llms.txt`، `/sitemap.xml`.
+4. ✅ جست‌وجو/فیلتر سمت‌کلاینت (search, category, source, tag, sort) — وانیلا JS.
+5. ✅ `site/public/CNAME` + `.github/workflows/build-deploy.yml` (validate → build → deploy Pages).
+   ⬜ فعال‌سازی سمت GitHub: Settings → Pages → Source: GitHub Actions (نیاز به احراز هویت `hmrbot`).
+6. ⬜ public کردن مخزن (بعد از فعال‌شدن Pages و تست).
+
+**تست‌شده محلی:** `pnpm validate` + `build:registry` + site build همه سبز؛ `astro preview` — `/`، `/skill`، `/skill/rag-basics` درست رندر می‌شوند.
+
+**registry.json حالا قطعی (deterministic) است** (بدون `generated_at`) تا CI بتواند stale بودنش را چک کند.
+
+**باقی‌ماندهٔ فاز ۲:** push + فعال‌سازی Pages در تنظیمات GitHub + سوییچ CNAME به Proxied (بخش ۹) + public کردن مخزن.
 
 ### فاز ۳ — CLI `npx hmrbot` (~۳–۵ روز)
 
