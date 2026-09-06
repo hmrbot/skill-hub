@@ -1,11 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync, statSync, existsSync } from "node:fs";
 import { dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import {
-  DEFAULT_REGISTRY_URL,
-  REGISTRY_CACHE,
-  REGISTRY_TTL_MS,
-} from "./config.js";
+import { REGISTRY_URLS, REGISTRY_CACHE, REGISTRY_TTL_MS } from "./config.js";
 import type { Registry } from "./types.js";
 
 function readLocal(path: string): Registry {
@@ -35,23 +31,27 @@ export async function loadRegistry(opts: {
   if (source && !/^https?:\/\//.test(source)) {
     return readLocal(source);
   }
-  const url = source ?? DEFAULT_REGISTRY_URL;
+  const urls = source ? [source] : REGISTRY_URLS;
 
   if (!opts.refresh && existsSync(REGISTRY_CACHE)) {
     const age = Date.now() - statSync(REGISTRY_CACHE).mtimeMs;
     if (age < REGISTRY_TTL_MS) return readLocal(REGISTRY_CACHE);
   }
 
-  try {
-    const reg = await fetchRemote(url);
-    mkdirSync(dirname(REGISTRY_CACHE), { recursive: true });
-    writeFileSync(REGISTRY_CACHE, JSON.stringify(reg));
-    return reg;
-  } catch (err) {
-    if (existsSync(REGISTRY_CACHE)) {
-      process.stderr.write(`! registry fetch failed, using cached copy\n`);
-      return readLocal(REGISTRY_CACHE);
+  let lastErr: unknown;
+  for (const url of urls) {
+    try {
+      const reg = await fetchRemote(url);
+      mkdirSync(dirname(REGISTRY_CACHE), { recursive: true });
+      writeFileSync(REGISTRY_CACHE, JSON.stringify(reg));
+      return reg;
+    } catch (err) {
+      lastErr = err;
     }
-    throw err;
   }
+  if (existsSync(REGISTRY_CACHE)) {
+    process.stderr.write(`! registry fetch failed, using cached copy\n`);
+    return readLocal(REGISTRY_CACHE);
+  }
+  throw lastErr;
 }

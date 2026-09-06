@@ -1,8 +1,12 @@
 import { homedir } from "node:os";
 import { join } from "node:path";
 
-/** Where the registry is published (the catalog site serves it). */
-export const DEFAULT_REGISTRY_URL = "https://hub.hmrbot.com/registry.json";
+/** Where the registry is published (the catalog site serves it), plus a raw
+ *  GitHub fallback so the CLI works even if the site is down. */
+export const REGISTRY_URLS = [
+  "https://hub.hmrbot.com/registry.json",
+  "https://raw.githubusercontent.com/hmrbot/skill-hub/main/registry.json",
+];
 
 /** The repo that holds first-party (`source: "hmrbot"`) skills. */
 export const HOME_REPO = { owner: "hmrbot", repo: "skill-hub", ref: "main" };
