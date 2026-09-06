@@ -10,24 +10,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: pnpm/action-setup@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
-
       - run: pnpm install --frozen-lockfile
 
       - name: validate skills (hmrbot rules)
         run: pnpm validate
 
-      - name: registry builds cleanly
+      - name: registry.json is up to date
         run: |
           pnpm build:registry
           git diff --exit-code registry.json \
             || (echo "::error::registry.json is stale — run 'pnpm build:registry' and commit"; exit 1)
+
+      - name: site builds
+        run: pnpm --filter @hmrbot/hub-site build
+
+      - name: cli typechecks + builds
+        run: |
+          pnpm --filter hmrbot typecheck
+          pnpm --filter hmrbot build
 
   skills-ref:
     runs-on: ubuntu-latest

@@ -13,7 +13,9 @@
     "build:registry": "tsx scripts/build-registry.ts",
     "new:skill": "tsx scripts/new-skill.ts",
     "site:dev": "pnpm --filter @hmrbot/hub-site dev",
-    "site:build": "pnpm --filter @hmrbot/hub-site build"
+    "site:build": "pnpm --filter @hmrbot/hub-site build",
+    "cli:build": "pnpm --filter hmrbot build",
+    "cli:dev": "pnpm --filter hmrbot dev"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

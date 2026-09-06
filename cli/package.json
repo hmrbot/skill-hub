@@ -1,0 +1,31 @@
+{
+  "name": "hmrbot",
+  "version": "0.1.0",
+  "description": "Install agent skills from the hmrbot Hub (hub.hmrbot.com).",
+  "type": "module",
+  "bin": {
+    "hmrbot": "./dist/index.js"
+  },
+  "files": ["dist"],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": ["agent-skills", "skill", "agentskills", "hmrbot", "claude", "hermes", "codex"],
+  "license": "Apache-2.0",
+  "homepage": "https://hub.hmrbot.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hmrbot/skill-hub",
+    "directory": "cli"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
