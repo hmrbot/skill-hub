@@ -1,11 +1,11 @@
 name: publish-cli
 
-# Publishes cli/ to npm as `hmrbot`.
+# Publishes cli/ to npm as `hmrbot-hub` (binary: `hmrbot`).
 #
 # Auth = npm Trusted Publishing (OIDC) — NO token, NO NPM_TOKEN secret.
 # One-time setup (see Response doc "انتشار CLI روی npm"):
-#   1. publish v0.1.0 once manually from your machine (`npm publish` in cli/)
-#   2. npmjs.com -> package `hmrbot` -> Settings -> Trusted Publisher:
+#   1. publish once manually from your machine (`npm publish` in cli/)
+#   2. npmjs.com -> package `hmrbot-hub` -> Settings -> Trusted Publisher:
 #      GitHub Actions / owner: hmrbot / repo: skill-hub / workflow: publish-cli.yml
 # After that this workflow publishes every version bump on its own.
 
