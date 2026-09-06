@@ -1,0 +1,53 @@
+---
+import Base from "../../layouts/Base.astro";
+---
+
+<Base
+  title="پرامپت تصویر"
+  description="کتابخانهٔ پرامپت‌های تولید تصویر hmrbot — به‌زودی."
+  path="/image-prompt"
+>
+  <section class="soon">
+    <p class="soon__kicker">image prompts</p>
+    <h1>کتابخانهٔ پرامپت تصویر</h1>
+    <p class="soon__lead">
+      پرامپت‌های آمادهٔ فارسی برای تولید تصویر — برای Midjourney، DALL·E،
+      Stable Diffusion، Flux و بقیه. این بخش هنوز خالی است و به‌زودی پر می‌شود.
+    </p>
+    <div class="soon__links">
+      <a class="btn btn--primary" href="/prompt">پرامپت‌های متنی ←</a>
+      <a class="btn" href="/skill">مرور مهارت‌ها ←</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .soon {
+    max-width: 52ch;
+    margin-inline: auto;
+    text-align: center;
+    padding-block: var(--sp-12) var(--sp-16);
+  }
+  .soon__kicker {
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: var(--fs-xs);
+    color: var(--accent);
+    margin-bottom: var(--sp-3);
+  }
+  .soon h1 {
+    font-size: var(--fs-2xl);
+  }
+  .soon__lead {
+    color: var(--text-2);
+    line-height: 1.9;
+  }
+  .soon__links {
+    display: flex;
+    gap: var(--sp-3);
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: var(--sp-6);
+  }
+</style>

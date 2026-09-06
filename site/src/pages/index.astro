@@ -8,8 +8,10 @@ const promptCount = getPrompts().length;
 const sections = [
   { key: "skill", title: "مهارت‌ها", en: "Skills", href: "/skill", count: skillCount, active: true,
     desc: "بسته‌های دستورالعمل با فرمت استاندارد agentskills.io — قابل نصب در Claude Code، Hermes، Codex و بقیه." },
-  { key: "prompt", title: "پرامپت‌ها", en: "Prompts", href: "/prompt", count: promptCount, active: promptCount > 0,
+  { key: "prompt", title: "پرامپت متنی", en: "Text prompts", href: "/prompt", count: promptCount, active: promptCount > 0,
     desc: "پرامپت‌های آمادهٔ فارسی، ساختاریافته و تست‌شده." },
+  { key: "image-prompt", title: "پرامپت تصویر", en: "Image prompts", href: "/image-prompt", count: 0, active: true,
+    desc: "پرامپت‌های تولید تصویر برای Midjourney، DALL·E و بقیه. به‌زودی." },
   { key: "software", title: "نرم‌افزار", en: "Software", href: null, count: 0, active: false,
     desc: "دایرکتوری ابزارها و سرویس‌های هوش مصنوعی. به‌زودی." },
 ];
@@ -36,7 +38,7 @@ const sections = [
         >
           <div class="scard__head">
             <h2>{s.title}</h2>
-            {s.active ? <span class="scard__count">{s.count}</span> : <span class="scard__soon">به‌زودی</span>}
+            {s.count > 0 ? <span class="scard__count">{s.count}</span> : <span class="scard__soon">به‌زودی</span>}
           </div>
           <p class="scard__desc">{s.desc}</p>
           <span class="scard__en">{s.en}</span>

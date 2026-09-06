@@ -14,11 +14,12 @@ const hasPrompts = getPrompts().length > 0;
       <a href="/skill" aria-current={pathname.startsWith("/skill") ? "page" : undefined}>مهارت‌ها</a>
       {
         hasPrompts ? (
-          <a href="/prompt" aria-current={pathname.startsWith("/prompt") ? "page" : undefined}>پرامپت‌ها</a>
+          <a href="/prompt" aria-current={pathname.startsWith("/prompt") ? "page" : undefined}>پرامپت متنی</a>
         ) : (
-          <span class="nav__soon">پرامپت‌ها</span>
+          <span class="nav__soon">پرامپت متنی</span>
         )
       }
+      <a href="/image-prompt" aria-current={pathname.startsWith("/image-prompt") ? "page" : undefined}>پرامپت تصویر</a>
       <span class="nav__soon">نرم‌افزار</span>
       <a class="nav__gh" href="https://github.com/hmrbot/skill-hub" rel="noopener">GitHub</a>
     </nav>

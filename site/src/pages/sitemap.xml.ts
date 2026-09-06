@@ -8,6 +8,7 @@ export const GET: APIRoute = ({ site }) => {
     "/",
     "/skill",
     ...(local.some((e) => e.section === "prompt") ? ["/prompt"] : []),
+    "/image-prompt",
     ...local.map((e) => `/${e.section}/${e.slug}`),
   ];
 
