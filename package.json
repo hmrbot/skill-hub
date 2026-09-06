@@ -6,7 +6,7 @@
   "description": "hmrbot Hub — agent skills, prompts, and a software directory. Static, git-versioned, no database.",
   "packageManager": "pnpm@11.9.0",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "scripts": {
     "validate": "tsx scripts/validate.ts",

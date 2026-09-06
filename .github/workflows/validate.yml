@@ -13,7 +13,7 @@ jobs:
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: pnpm
       - run: pnpm install --frozen-lockfile
 
@@ -36,7 +36,7 @@ jobs:
 
   skills-ref:
     runs-on: ubuntu-latest
-    continue-on-error: true # informational until phase 3
+    continue-on-error: true # advisory; pnpm validate is the gate
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
