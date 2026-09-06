@@ -9,7 +9,7 @@ import {
   cmdOpen,
 } from "./commands.js";
 
-const VERSION = "0.1.0";
+const VERSION = "0.1.1";
 
 const HELP = `hmrbot — install agent skills & prompts from the hmrbot Hub (hub.hmrbot.com)
 

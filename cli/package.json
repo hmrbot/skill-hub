@@ -1,6 +1,6 @@
 {
   "name": "hmrbot-hub",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Install agent skills and prompts from the hmrbot Hub (hub.hmrbot.com).",
   "type": "module",
   "bin": {
