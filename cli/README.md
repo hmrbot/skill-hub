@@ -1,21 +1,22 @@
-# hmrbot
+# hmrbot-hub
 
-Install agent skills from the [hmrbot Hub](https://hub.hmrbot.com).
+Install agent skills and prompts from the [hmrbot Hub](https://hub.hmrbot.com).
+(The package is `hmrbot-hub`; the installed command is `hmrbot`.)
 
 ```bash
-npx hmrbot skill add rag-basics
+npx hmrbot-hub skill add rag-basics
 ```
 
 ## Commands
 
 ```
-npx hmrbot skill add <slug> [options]    install a skill
-npx hmrbot skill remove <slug>           uninstall
-npx hmrbot skill update [<slug>]         update one, or all hmrbot-installed skills
-npx hmrbot skill search <query>          search the catalog
-npx hmrbot skill list                    list installed skills
-npx hmrbot registry                      catalog summary
-npx hmrbot open [skill|prompt|software]  open the catalog
+npx hmrbot-hub skill add <slug> [options]    install a skill
+npx hmrbot-hub skill remove <slug>           uninstall
+npx hmrbot-hub skill update [<slug>]         update one, or all hmrbot-installed skills
+npx hmrbot-hub skill search <query>          search the catalog
+npx hmrbot-hub skill list                    list installed skills
+npx hmrbot-hub registry                      catalog summary
+npx hmrbot-hub open [skill|prompt|software]  open the catalog
 ```
 
 ## Options

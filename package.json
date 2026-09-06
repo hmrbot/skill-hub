@@ -1,5 +1,5 @@
 {
-  "name": "hmrbot-hub",
+  "name": "hmrbot-hub-workspace",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -15,8 +15,8 @@
     "new:prompt": "tsx scripts/new.ts prompt",
     "site:dev": "pnpm --filter @hmrbot/hub-site dev",
     "site:build": "pnpm --filter @hmrbot/hub-site build",
-    "cli:build": "pnpm --filter hmrbot build",
-    "cli:dev": "pnpm --filter hmrbot dev"
+    "cli:build": "pnpm --filter hmrbot-hub build",
+    "cli:dev": "pnpm --filter hmrbot-hub dev"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

@@ -87,7 +87,7 @@ function scanLocal(repoRoot: string): {
         license: fm.license ?? "Apache-2.0",
         path: `content/${section}s/${res.slug}/`,
         upstream_url: null,
-        install: `npx hmrbot ${section} add ${res.slug}`,
+        install: `npx hmrbot-hub ${section} add ${res.slug}`,
       });
     }
   }

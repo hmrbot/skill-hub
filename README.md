@@ -6,7 +6,7 @@ files.
 
 - **Catalog:** https://hub.hmrbot.com  ·  `/skill`  ·  `/prompt`  ·  `/software`
 - **Format:** the open [`agentskills.io`](https://agentskills.io/specification) `SKILL.md` standard
-- **Install:** `npx hmrbot skill add <slug>` (from phase 3)
+- **Install:** `npx hmrbot-hub skill add <slug>` (package `hmrbot-hub`, command `hmrbot`)
 
 Status: **phase 1** — skill repository + validation. Prompt and software
 sections, the catalog site, and the CLI come in later phases. See `PLAN.md`.

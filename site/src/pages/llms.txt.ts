@@ -9,7 +9,7 @@ export const GET: APIRoute = ({ site }) => {
     "# hmrbot Hub",
     "",
     "> Open library of agent skills and prompts, in the agentskills.io SKILL.md format.",
-    "> Install: npx hmrbot skill add <slug>  /  npx hmrbot prompt add <slug>",
+    "> Install: npx hmrbot-hub skill add <slug>  /  npx hmrbot-hub prompt add <slug>",
     "",
   ];
 

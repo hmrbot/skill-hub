@@ -14,14 +14,14 @@ const VERSION = "0.1.0";
 const HELP = `hmrbot — install agent skills & prompts from the hmrbot Hub (hub.hmrbot.com)
 
 usage:
-  npx hmrbot skill  add <slug> [options]     install a skill
-  npx hmrbot prompt add <slug> [options]     install a prompt
-  npx hmrbot <skill|prompt> remove <slug>    uninstall
-  npx hmrbot <skill|prompt> update [<slug>]  update one, or all installed
-  npx hmrbot <skill|prompt> search <query>   search the catalog
-  npx hmrbot <skill|prompt> list             list installed
-  npx hmrbot registry                        catalog summary
-  npx hmrbot open [skill|prompt|software]    open the catalog in a browser
+  npx hmrbot-hub skill  add <slug> [options]     install a skill
+  npx hmrbot-hub prompt add <slug> [options]     install a prompt
+  npx hmrbot-hub <skill|prompt> remove <slug>    uninstall
+  npx hmrbot-hub <skill|prompt> update [<slug>]  update one, or all installed
+  npx hmrbot-hub <skill|prompt> search <query>   search the catalog
+  npx hmrbot-hub <skill|prompt> list             list installed
+  npx hmrbot-hub registry                        catalog summary
+  npx hmrbot-hub open [skill|prompt|software]    open the catalog in a browser
 
   (the section word is optional for search/list/registry/update — omit to span both)
 

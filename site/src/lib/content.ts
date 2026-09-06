@@ -26,7 +26,7 @@ export const SECTION_META: Record<
     title: "مهارت‌ها",
     one: "مهارت",
     en: "Skills",
-    install: "npx hmrbot skill add",
+    install: "npx hmrbot-hub skill add",
     blurb:
       "بسته‌های دستورالعمل با فرمت استاندارد agentskills.io — قابل نصب در Claude Code، Hermes، Codex و بقیه.",
   },
@@ -34,7 +34,7 @@ export const SECTION_META: Record<
     title: "پرامپت‌ها",
     one: "پرامپت",
     en: "Prompts",
-    install: "npx hmrbot prompt add",
+    install: "npx hmrbot-hub prompt add",
     blurb: "پرامپت‌های آمادهٔ فارسی، ساختاریافته و تست‌شده.",
   },
   software: {

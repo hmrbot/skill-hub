@@ -1,7 +1,7 @@
 import type { APIRoute } from "astro";
 import { getRegistry } from "../lib/content";
 
-// The index the CLI (`npx hmrbot`) fetches from https://hub.hmrbot.com/registry.json
+// The index the CLI (`npx hmrbot-hub`) fetches from https://hub.hmrbot.com/registry.json
 export const GET: APIRoute = () => {
   return new Response(JSON.stringify(getRegistry(), null, 2), {
     headers: {

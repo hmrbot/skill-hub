@@ -77,7 +77,7 @@ A skill is a folder under `content/skills/` containing a `SKILL.md` file, in the
 
 ## Versioning
 
-Bump `hmrbot.version` on any content change. `npx hmrbot skill update` compares
+Bump `hmrbot.version` on any content change. `npx hmrbot-hub skill update` compares
 this to the installed copy.
 
 ## Bytes, not a hub server

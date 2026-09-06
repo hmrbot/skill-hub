@@ -172,7 +172,7 @@ export async function harvestSource(
       license,
       path: null,
       upstream_url: `https://github.com/${src.repo}/tree/${src.ref}/${dir}`,
-      install: `npx hmrbot skill add ${slug}`,
+      install: `npx hmrbot-hub skill add ${slug}`,
     };
     return { slug, entry };
   });

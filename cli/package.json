@@ -1,10 +1,10 @@
 {
-  "name": "hmrbot",
+  "name": "hmrbot-hub",
   "version": "0.1.0",
-  "description": "Install agent skills from the hmrbot Hub (hub.hmrbot.com).",
+  "description": "Install agent skills and prompts from the hmrbot Hub (hub.hmrbot.com).",
   "type": "module",
   "bin": {
-    "hmrbot": "./dist/index.js"
+    "hmrbot": "dist/index.js"
   },
   "files": ["dist"],
   "engines": {
@@ -20,7 +20,7 @@
   "homepage": "https://hub.hmrbot.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/hmrbot/skill-hub",
+    "url": "git+https://github.com/hmrbot/skill-hub.git",
     "directory": "cli"
   },
   "devDependencies": {

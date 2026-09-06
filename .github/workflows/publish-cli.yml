@@ -53,8 +53,8 @@ jobs:
       - name: build + typecheck
         if: steps.check.outputs.published == 'false'
         run: |
-          pnpm --filter hmrbot typecheck
-          pnpm --filter hmrbot build
+          pnpm --filter hmrbot-hub typecheck
+          pnpm --filter hmrbot-hub build
 
       - name: publish
         if: steps.check.outputs.published == 'false'
