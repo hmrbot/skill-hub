@@ -452,12 +452,19 @@ npx hmrbot open [skill|prompt|software]    # باز کردن کاتالوگ در
 - claim نام `hmrbot` روی npm + secret `NPM_TOKEN` برای انتشار CLI
 - بعدش: تأیید سایت + CNAME به Proxied + SSL Full
 
-### فاز ۵ — Prompt + تثبیت (~۳–۵ روز)
+### فاز ۵ — Prompt  ✅ (۲۰۲۶-۰۹-۰۶) — commit `d361310`
 
-1. `content/prompts/<slug>/PROMPT.md` با همان الگو؛ schema و taxonomy مشترک.
-2. `/prompt`, `/prompt/[slug]` در کاتالوگ (تب دوم).
-3. `npx hmrbot prompt add <slug>`.
-4. `tests/scenarios/<slug>/` برای skillهای بومی.
+1. ✅ `content/prompts/<slug>/PROMPT.md` — frontmatter مشترک + `## پرامپت` (fenced) + `## کاربرد`. دو پرامپت واقعی فارسی: `rag-answer-guardrail`، `code-review-fa`.
+2. ✅ schema: `validateSkillDir` → `validateContentDir(dir, section)`؛ `SECTION_FILE`؛ heading hint per section.
+3. ✅ registry هر دو `content/skills` + `content/prompts` را اسکن می‌کند؛ entry دارای `section` + `npx hmrbot <section> add`.
+4. ✅ site: routeها به `/[section]` و `/[section]/[slug]` جمع شدند (skill، prompt؛ software بعداً رایگان). `SkillCard`→`EntryCard`، `lib/skills.ts`→`lib/content.ts`. code block پرامپت با `unicode-bidi: plaintext` (متن RTL، توکن LTR) + دکمهٔ کپی هر بلوک. صفحهٔ اصلی + هدر بخش Prompt را روشن می‌کنند.
+5. ✅ CLI: `hmrbot prompt add|remove|update|search|list`؛ نصب به `<base>/prompts`. کلمهٔ section برای search/list/registry/update اختیاری است.
+6. ✅ `pnpm new:skill` / `pnpm new:prompt`.
+7. ⬜ **`tests/scenarios/` (eval harness) موکول شد** — `pnpm validate` گیت است؛ eval سناریومحور nice-to-have برای مخزن بالغ.
+
+**کاتالوگ الان ۱۹ entry دارد** (۳ skill + ۲ prompt بومی + ۱۴ skill فدرال). CI `validate` + `build-deploy/build` سبز.
+
+**تنها بلاکر زنده‌شدن سایت هنوز:** Settings → Pages → Source: GitHub Actions.
 
 ### فاز ۶ — Software Directory (بعداً)
 
