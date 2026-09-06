@@ -1,7 +1,7 @@
 # پلن اجرای hmrbot Hub
 
 > نسخه ۲ — ۶ سپتامبر ۲۰۲۶ (تصمیم‌های ساختار، دامنه و میزبانی قفل شد)
-> این پوشه (`D:\.hmr.com\skill-hub`) نسخهٔ کاری محلیِ مخزن `github.com/hmrbot/hub` است.
+> این پوشه (`D:\.hmr.com\skill-hub`) نسخهٔ کاری محلیِ مخزن `github.com/hmrbot/skill-hub` است.
 > متن فارسی؛ همهٔ شناسه‌های فنی به Latin.
 
 ---
@@ -34,7 +34,7 @@
 
 | مورد | تصمیم | دلیل |
 |---|---|---|
-| ساختار git | **monorepo واحد** `github.com/hmrbot/hub` | بخش ۲.۱ |
+| ساختار git | **monorepo واحد** `github.com/hmrbot/skill-hub` | بخش ۲.۱ |
 | package manager | pnpm workspace (هم‌راستا با `site-emd-blog`) | یکدستی، ابزار مشترک |
 | دامنه | `hub.hmrbot.com` با مسیر (`/skill`, `/prompt`, `/software`) | تصمیم کاربر |
 | میزبانی کاتالوگ | **GitHub Pages** (رایگان) | بخش ۲.۲ |
@@ -72,7 +72,7 @@
 
 ```
                         ┌──────────────────────────────────────┐
- نویسنده ── git push ───▶│ github.com/hmrbot/hub   (monorepo)    │
+ نویسنده ── git push ───▶│ github.com/hmrbot/skill-hub   (monorepo)    │
                         │  content/skills/<slug>/SKILL.md       │ ← منبع حقیقت
                         │  content/prompts/  content/software/  │
                         │  sources.yaml                         │ ← فهرست federation
@@ -95,19 +95,19 @@
  کاربر ── npx hmrbot skill add <slug> ──▶ CLI (پکیج npm: hmrbot)
               │ registry.json را می‌گیرد → resolve → source
               │ فولدر SKILL.md را دانلود می‌کند
-              │   بومی → raw hmrbot/hub    ·    فدرال → upstream repo
+              │   بومی → raw hmrbot/skill-hub    ·    فدرال → upstream repo
               ▼ کپی به  .claude/skills/  |  ~/.hermes/skills/  |  .agents/skills/
                 + .hmrbot-meta.json برای update
 ```
 
-هیچ محتوایی از مخازن فدرال داخل `hmrbot/hub` ذخیره نمی‌شود — فقط `name`, `description`, `license`, لینک upstream در `registry.json`.
+هیچ محتوایی از مخازن فدرال داخل `hmrbot/skill-hub` ذخیره نمی‌شود — فقط `name`, `description`, `license`, لینک upstream در `registry.json`.
 
 ---
 
-## ۴. ساختار مخزن `hmrbot/hub`
+## ۴. ساختار مخزن `hmrbot/skill-hub`
 
 ```
-hmrbot/hub/                          → D:\.hmr.com\skill-hub
+hmrbot/skill-hub/                          → D:\.hmr.com\skill-hub
 ├── pnpm-workspace.yaml
 ├── package.json                     # root، private، اسکریپت‌های سطح‌بالا
 ├── LICENSE                          # Apache-2.0 (محتوای بومی)
@@ -301,7 +301,7 @@ npx hmrbot open [skill|prompt|software]    # باز کردن کاتالوگ در
 1. `registry.json` را از `https://hub.hmrbot.com/registry.json` می‌گیرد (کش `~/.cache/hmrbot/`، TTL ۶ ساعت؛ `--refresh` اجباری).
 2. `<slug>` را resolve → `source` و `upstream_url`.
 3. **کل فولدر** skill را دانلود:
-   - `source: hmrbot` → `raw.githubusercontent.com/hmrbot/hub/main/content/skills/<slug>/…`
+   - `source: hmrbot` → `raw.githubusercontent.com/hmrbot/skill-hub/main/content/skills/<slug>/…`
    - فدرال → از `upstream_url`.
 4. مقصد: `--dir` صریح → `--agent` → auto-detect (`.claude/` → `.claude/skills/` ؛ `~/.hermes/` → `~/.hermes/skills/` ؛ وگرنه `.agents/skills/`).
 5. کپی + `<slug>/.hmrbot-meta.json`: `{ section, source, version, upstream_url, installed_at, dest }`.
@@ -315,7 +315,7 @@ npx hmrbot open [skill|prompt|software]    # باز کردن کاتالوگ در
 
 ## ۹. `hub.hmrbot.com` روی GitHub Pages
 
-1. مخزن `hmrbot/hub` → Settings → Pages → Source: **GitHub Actions**.
+1. مخزن `hmrbot/skill-hub` → Settings → Pages → Source: **GitHub Actions**.
 2. `site/public/CNAME` با محتوای `hub.hmrbot.com` (Astro پوشهٔ `public/` را به `dist/` کپی می‌کند).
 3. در **Cloudflare DNS** (که nameserverهای `hmrbot.com` را دارد): رکورد
    `CNAME   hub   →   hmrbot.github.io`   — حالت **Proxied** (ابر نارنجی؛ caching و analytics رایگان). اگر گواهی گیر کرد، موقتاً DNS-only کن تا GitHub گواهی بدهد، بعد Proxied.
@@ -324,9 +324,9 @@ npx hmrbot open [skill|prompt|software]    # باز کردن کاتالوگ در
 6. Cloudflare → SSL/TLS mode: **Full**.
 
 **توزیع‌های موازی (بدون کد اضافه):**
-- `npx skills add hmrbot/hub` — نصب‌کنندهٔ عمومی community.
-- Claude Code marketplace: `/plugin marketplace add hmrbot/hub` (نیازمند `.claude-plugin/marketplace.json`).
-- Hermes tap: `hermes skills tap add hmrbot/hub`.
+- `npx skills add hmrbot/skill-hub` — نصب‌کنندهٔ عمومی community.
+- Claude Code marketplace: `/plugin marketplace add hmrbot/skill-hub` (نیازمند `.claude-plugin/marketplace.json`).
+- Hermes tap: `hermes skills tap add hmrbot/skill-hub`.
 
 ---
 
@@ -380,7 +380,7 @@ npx hmrbot open [skill|prompt|software]    # باز کردن کاتالوگ در
 
 ### فاز ۰ — راه‌اندازی  ✅ (۲۰۲۶-۰۹-۰۶)
 
-1. ~~مخزن `hmrbot/hub` روی GitHub~~ — کد آماده و commit شد؛ ساخت repo + push منتظر احراز هویت `hmrbot` است.
+1. ~~مخزن `hmrbot/skill-hub` روی GitHub~~ — کد آماده و commit شد؛ ساخت repo + push منتظر احراز هویت `hmrbot` است.
 2. ✅ `git init` در `D:\.hmr.com\skill-hub` (branch `main`، commit `0bb2da5`).
 3. ✅ `pnpm-workspace.yaml` + ساختار بخش ۴ + `LICENSE` + `README.md` + `CONTRIBUTING.md` + `.gitattributes` + `tsconfig.json`.
 4. ✅ `sources.yaml` (فقط `hmrbot` فعال؛ بقیه `enabled: false` تا فاز ۴).
@@ -468,7 +468,7 @@ npx hmrbot open [skill|prompt|software]    # باز کردن کاتالوگ در
 
 ## ۱۵. اولین اقدام‌ها (چک‌لیست فاز ۰)
 
-1. [ ] مخزن `hmrbot/hub` روی GitHub (private).
+1. [ ] مخزن `hmrbot/skill-hub` روی GitHub (private).
 2. [ ] `hmrbot` یا `@hmrbot/cli` روی npm claim/رزرو.
 3. [ ] در این پوشه: `pnpm-workspace.yaml` + ساختار بخش ۴ + `LICENSE` + `README.md` + `sources.yaml` + `content/skills/_template/`.
 4. [ ] `git remote add origin` + اولین commit + push.

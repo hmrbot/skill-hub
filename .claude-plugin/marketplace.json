@@ -16,7 +16,7 @@
       "version": "0.1.0",
       "author": { "name": "hmrbot", "url": "https://github.com/hmrbot" },
       "homepage": "https://hub.hmrbot.com/skill",
-      "repository": "https://github.com/hmrbot/hub",
+      "repository": "https://github.com/hmrbot/skill-hub",
       "license": "Apache-2.0",
       "skills": ["./content/skills/"]
     }
