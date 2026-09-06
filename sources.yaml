@@ -1,0 +1,47 @@
+# Federation config for the hmrbot Hub registry build.
+#
+# Only "name", "description", "license" and the upstream link are ever pulled
+# from external sources — no skill content is copied into this repo. The CLI
+# downloads federated skills straight from upstream at install time.
+#
+# license filtering (see PLAN.md section 11):
+#   - license_policy: repo       -> whole repo shares one license (field: license)
+#   - license_policy: per-skill  -> each skill folder has its own LICENSE.txt
+#   - anything not in license_allow, or listed in exclude, is dropped + logged
+
+version: 1
+
+sections:
+  skill:
+    sources:
+      - id: hmrbot
+        type: local
+        path: content/skills/
+
+      - id: microsoft
+        type: github
+        repo: microsoft/skills
+        ref: main
+        path: .github/skills/
+        license_policy: repo
+        license: MIT
+        enabled: false            # phase 4
+
+      - id: anthropic
+        type: github
+        repo: anthropics/skills
+        ref: main
+        path: skills/
+        license_policy: per-skill
+        license_allow: [Apache-2.0, MIT]
+        exclude: [pdf, docx, pptx, xlsx]   # (c) all rights reserved
+        enabled: false            # phase 4
+
+      - id: openai
+        type: github
+        repo: openai/codex
+        ref: main
+        path: ""                  # skills path to be confirmed
+        license_policy: per-skill
+        license_allow: [Apache-2.0, MIT]
+        enabled: false

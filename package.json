@@ -1,0 +1,29 @@
+{
+  "name": "hmrbot-hub",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "hmrbot Hub — agent skills, prompts, and a software directory. Static, git-versioned, no database.",
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "validate": "tsx scripts/validate.ts",
+    "build:registry": "tsx scripts/build-registry.ts",
+    "new:skill": "tsx scripts/new-skill.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "@hmrbot/hub-registry": "workspace:*",
+    "@hmrbot/hub-schema": "workspace:*",
+    "@hmrbot/hub-taxonomy": "workspace:*",
+    "gray-matter": "^4.0.3",
+    "yaml": "^2.6.1",
+    "zod": "^3.24.1"
+  }
+}

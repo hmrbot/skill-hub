@@ -1,0 +1,24 @@
+{
+  "name": "hmrbot-hub",
+  "owner": {
+    "name": "hmrbot",
+    "url": "https://github.com/hmrbot"
+  },
+  "metadata": {
+    "description": "hmrbot Hub — agent skills (Persian-first). Prompts and a software directory to follow.",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "hmrbot-skills",
+      "source": "./",
+      "description": "All hmrbot Hub skills.",
+      "version": "0.1.0",
+      "author": { "name": "hmrbot", "url": "https://github.com/hmrbot" },
+      "homepage": "https://hub.hmrbot.com/skill",
+      "repository": "https://github.com/hmrbot/hub",
+      "license": "Apache-2.0",
+      "skills": ["./content/skills/"]
+    }
+  ]
+}

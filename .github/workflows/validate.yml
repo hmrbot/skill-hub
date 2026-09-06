@@ -1,0 +1,47 @@
+name: validate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: validate skills (hmrbot rules)
+        run: pnpm validate
+
+      - name: registry builds cleanly
+        run: |
+          pnpm build:registry
+          git diff --exit-code registry.json \
+            || (echo "::error::registry.json is stale — run 'pnpm build:registry' and commit"; exit 1)
+
+  skills-ref:
+    runs-on: ubuntu-latest
+    continue-on-error: true # informational until phase 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install skills-ref
+      - name: validate against the agentskills.io spec
+        run: |
+          for d in content/skills/*/; do
+            [ "$(basename "$d")" = "_template" ] && continue
+            echo "== $d"
+            skills-ref validate "$d"
+          done

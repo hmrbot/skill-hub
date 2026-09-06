@@ -1,0 +1,8 @@
+packages:
+  - "packages/*"
+  - "site"
+  - "cli"
+
+# esbuild ships a platform binary via its install script; tsx needs it.
+allowBuilds:
+  esbuild: true
