@@ -1,0 +1,42 @@
+name: federation-sync
+
+# Re-harvest federated skill metadata daily and commit registry.json if it
+# changed. The committed file is the raw-GitHub fallback for the CLI; the live
+# site rebuilds federation fresh on every deploy anyway.
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: harvest
+        run: pnpm build:registry
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: commit if changed
+        run: |
+          if git diff --quiet registry.json; then
+            echo "registry.json unchanged"
+            exit 0
+          fi
+          git config user.name "hmrbot-bot"
+          git config user.email "hmrbot-bot@users.noreply.github.com"
+          git add registry.json
+          git commit -m "federation-sync: refresh registry.json"
+          git push

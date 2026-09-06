@@ -26,11 +26,10 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm validate
-      - name: registry.json is up to date
-        run: |
-          pnpm build:registry
-          git diff --exit-code registry.json \
-            || (echo "::error::registry.json is stale — run 'pnpm build:registry' and commit"; exit 1)
+      - name: build registry (local + federation)
+        run: pnpm build:registry
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       - run: pnpm --filter @hmrbot/hub-site build
       - uses: actions/upload-pages-artifact@v3
         with:

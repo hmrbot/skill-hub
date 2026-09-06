@@ -1,13 +1,14 @@
-# Federation config for the hmrbot Hub registry build.
+# Federation config for `pnpm build:registry`.
 #
-# Only "name", "description", "license" and the upstream link are ever pulled
-# from external sources — no skill content is copied into this repo. The CLI
-# downloads federated skills straight from upstream at install time.
+# Only name, description and license are pulled from external sources — no skill
+# content is copied here. The CLI downloads federated skills straight from
+# upstream at install time.
 #
-# license filtering (see PLAN.md section 11):
-#   - license_policy: repo       -> whole repo shares one license (field: license)
-#   - license_policy: per-skill  -> each skill folder has its own LICENSE.txt
-#   - anything not in license_allow, or listed in exclude, is dropped + logged
+# license_policy:
+#   repo       -> whole repo shares one license (field: license)
+#   per-skill  -> read each skill folder's LICENSE.txt / LICENSE and classify it
+# A skill whose license is not in license_allow (or is in `exclude`) is dropped
+# and logged.
 
 version: 1
 
@@ -18,15 +19,6 @@ sections:
         type: local
         path: content/skills/
 
-      - id: microsoft
-        type: github
-        repo: microsoft/skills
-        ref: main
-        path: .github/skills/
-        license_policy: repo
-        license: MIT
-        enabled: false            # phase 4
-
       - id: anthropic
         type: github
         repo: anthropics/skills
@@ -34,14 +26,26 @@ sections:
         path: skills/
         license_policy: per-skill
         license_allow: [Apache-2.0, MIT]
-        exclude: [pdf, docx, pptx, xlsx]   # (c) all rights reserved
-        enabled: false            # phase 4
+        exclude: [pdf, docx, pptx, xlsx] # (c) all rights reserved
+        enabled: true
+
+      - id: microsoft
+        type: github
+        repo: microsoft/skills
+        ref: main
+        path: .github/plugins/ # real skill dirs live here; .github/skills/* are symlinks
+        license_policy: repo
+        license: MIT
+        # ~180 Azure-SDK-specific skills — would bury the catalog. Federation
+        # works for it (tested); flip to true and add an `include:` allowlist
+        # if you want a curated subset.
+        enabled: false
 
       - id: openai
         type: github
         repo: openai/codex
         ref: main
-        path: ""                  # skills path to be confirmed
+        path: "" # skills path to be confirmed
         license_policy: per-skill
         license_allow: [Apache-2.0, MIT]
         enabled: false

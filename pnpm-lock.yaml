@@ -57,6 +57,12 @@ importers:
       '@hmrbot/hub-taxonomy':
         specifier: workspace:*
         version: link:../taxonomy
+      gray-matter:
+        specifier: ^4.0.3
+        version: 4.0.3
+      yaml:
+        specifier: ^2.6.1
+        version: 2.9.0
 
   packages/schema:
     dependencies:

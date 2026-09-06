@@ -1,12 +1,14 @@
 ---
 import type { RegistryEntry } from "../lib/skills";
-import { CATEGORY_LABEL, SOURCE_LABEL } from "../lib/skills";
+import { CATEGORY_LABEL, SOURCE_LABEL, githubUrlFor } from "../lib/skills";
 
 interface Props {
   skill: RegistryEntry;
 }
 const { skill } = Astro.props;
 const catLabel = skill.category ? (CATEGORY_LABEL[skill.category] ?? skill.category) : null;
+const isLocal = skill.source === "hmrbot";
+const href = isLocal ? `/skill/${skill.slug}` : githubUrlFor(skill);
 ---
 
 <article
@@ -18,7 +20,11 @@ const catLabel = skill.category ? (CATEGORY_LABEL[skill.category] ?? skill.categ
   data-name={skill.name}
   data-search={`${skill.name} ${skill.description} ${skill.tags.join(" ")}`.toLowerCase()}
 >
-  <a href={`/skill/${skill.slug}`} class="card__title">{skill.name}</a>
+  <a
+    href={href}
+    class="card__title"
+    {...isLocal ? {} : { target: "_blank", rel: "noopener" }}
+  >{skill.name}{isLocal ? "" : " ↗"}</a>
   <p class="card__desc">{skill.description}</p>
   <div class="card__meta">
     {

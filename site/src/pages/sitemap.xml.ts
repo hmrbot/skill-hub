@@ -3,7 +3,14 @@ import { getSkills } from "../lib/skills";
 
 export const GET: APIRoute = ({ site }) => {
   const base = site?.href.replace(/\/$/, "") ?? "https://hub.hmrbot.com";
-  const urls = ["/", "/skill", ...getSkills().map((s) => `/skill/${s.slug}`)];
+  const urls = [
+    "/",
+    "/skill",
+    // only first-party skills have detail pages
+    ...getSkills()
+      .filter((s) => s.source === "hmrbot")
+      .map((s) => `/skill/${s.slug}`),
+  ];
 
   const body = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">

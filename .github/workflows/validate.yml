@@ -20,19 +20,16 @@ jobs:
       - name: validate skills (hmrbot rules)
         run: pnpm validate
 
-      - name: registry.json is up to date
-        run: |
-          pnpm build:registry
-          git diff --exit-code registry.json \
-            || (echo "::error::registry.json is stale — run 'pnpm build:registry' and commit"; exit 1)
-
-      - name: site builds
+      - name: site builds (against committed registry.json)
         run: pnpm --filter @hmrbot/hub-site build
 
       - name: cli typechecks + builds
         run: |
           pnpm --filter hmrbot typecheck
           pnpm --filter hmrbot build
+
+      - name: registry builds (first-party only)
+        run: pnpm build:registry --local
 
   skills-ref:
     runs-on: ubuntu-latest

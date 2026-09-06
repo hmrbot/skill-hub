@@ -8,6 +8,8 @@
   },
   "dependencies": {
     "@hmrbot/hub-schema": "workspace:*",
-    "@hmrbot/hub-taxonomy": "workspace:*"
+    "@hmrbot/hub-taxonomy": "workspace:*",
+    "gray-matter": "^4.0.3",
+    "yaml": "^2.6.1"
   }
 }
