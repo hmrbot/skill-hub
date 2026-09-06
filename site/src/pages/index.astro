@@ -1,35 +1,17 @@
 ---
 import Base from "../layouts/Base.astro";
-import { getSkills } from "../lib/skills";
+import { getSkills, getPrompts } from "../lib/content";
 
 const skillCount = getSkills().length;
+const promptCount = getPrompts().length;
 
 const sections = [
-  {
-    key: "skill",
-    title: "مهارت‌ها",
-    en: "Skills",
-    href: "/skill",
-    active: true,
-    count: skillCount,
-    desc: "بسته‌های دستورالعمل با فرمت استاندارد agentskills.io — قابل نصب در Claude Code، Hermes، Codex و بقیه.",
-  },
-  {
-    key: "prompt",
-    title: "پرامپت‌ها",
-    en: "Prompts",
-    href: null,
-    active: false,
-    desc: "پرامپت‌های آمادهٔ فارسی، ساختاریافته و تست‌شده. به‌زودی.",
-  },
-  {
-    key: "software",
-    title: "نرم‌افزار",
-    en: "Software",
-    href: null,
-    active: false,
-    desc: "دایرکتوری ابزارها و سرویس‌های هوش مصنوعی. به‌زودی.",
-  },
+  { key: "skill", title: "مهارت‌ها", en: "Skills", href: "/skill", count: skillCount, active: true,
+    desc: "بسته‌های دستورالعمل با فرمت استاندارد agentskills.io — قابل نصب در Claude Code، Hermes، Codex و بقیه." },
+  { key: "prompt", title: "پرامپت‌ها", en: "Prompts", href: "/prompt", count: promptCount, active: promptCount > 0,
+    desc: "پرامپت‌های آمادهٔ فارسی، ساختاریافته و تست‌شده." },
+  { key: "software", title: "نرم‌افزار", en: "Software", href: null, count: 0, active: false,
+    desc: "دایرکتوری ابزارها و سرویس‌های هوش مصنوعی. به‌زودی." },
 ];
 ---
 

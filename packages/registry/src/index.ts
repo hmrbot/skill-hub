@@ -1,18 +1,18 @@
 /**
- * Build the hub registry: scan content/ for first-party skills and, when asked,
- * federate metadata from external repos (sources.yaml). The result is one
- * registry.json that both the catalog site and the CLI consume.
+ * Build the hub registry: scan content/ for first-party skills + prompts and,
+ * when asked, federate skill metadata from external repos (sources.yaml). One
+ * registry.json feeds both the catalog site and the CLI.
  */
 
-import { readdirSync, statSync } from "node:fs";
+import { readdirSync, statSync, existsSync } from "node:fs";
 import { join } from "node:path";
-import { validateSkillDir } from "@hmrbot/hub-schema";
-import { parseTags } from "@hmrbot/hub-taxonomy";
+import { validateContentDir } from "@hmrbot/hub-schema";
+import { parseTags, type Section } from "@hmrbot/hub-taxonomy";
 import { harvestAll, type Rejection } from "./federation.js";
 
 export interface RegistryEntry {
   slug: string;
-  section: "skill" | "prompt" | "software";
+  section: Section;
   name: string;
   description: string;
   category: string | null;
@@ -34,14 +34,18 @@ export interface Registry {
 
 export interface BuildResult {
   registry: Registry;
-  errors: { slug: string; message: string }[];
+  errors: { slug: string; section: Section; message: string }[];
   rejected: Rejection[];
 }
 
-function listSkillDirs(skillsRoot: string): string[] {
-  return readdirSync(skillsRoot)
+/** content/<section>s/  ->  local sections we ship first-party. */
+const LOCAL_SECTIONS: Section[] = ["skill", "prompt"];
+
+function listEntryDirs(root: string): string[] {
+  if (!existsSync(root)) return [];
+  return readdirSync(root)
     .filter((n) => !n.startsWith("_") && !n.startsWith("."))
-    .map((n) => join(skillsRoot, n))
+    .map((n) => join(root, n))
     .filter((p) => {
       try {
         return statSync(p).isDirectory();
@@ -53,44 +57,47 @@ function listSkillDirs(skillsRoot: string): string[] {
 
 function scanLocal(repoRoot: string): {
   entries: RegistryEntry[];
-  errors: { slug: string; message: string }[];
+  errors: BuildResult["errors"];
 } {
-  const skillsRoot = join(repoRoot, "content", "skills");
   const entries: RegistryEntry[] = [];
-  const errors: { slug: string; message: string }[] = [];
+  const errors: BuildResult["errors"] = [];
 
-  for (const dir of listSkillDirs(skillsRoot)) {
-    const res = validateSkillDir(dir);
-    if (!res.ok || !res.doc) {
-      for (const i of res.issues.filter((x) => x.level === "error")) {
-        errors.push({ slug: res.slug, message: i.message });
+  for (const section of LOCAL_SECTIONS) {
+    const root = join(repoRoot, "content", `${section}s`);
+    for (const dir of listEntryDirs(root)) {
+      const res = validateContentDir(dir, section);
+      if (!res.ok || !res.doc) {
+        for (const i of res.issues.filter((x) => x.level === "error")) {
+          errors.push({ slug: res.slug, section, message: i.message });
+        }
+        continue;
       }
-      continue;
+      const fm = res.doc.frontmatter;
+      const md = fm.metadata ?? {};
+      entries.push({
+        slug: res.slug,
+        section,
+        name: fm.name,
+        description: fm.description.trim(),
+        category: (md["hmrbot.category"] as string | undefined) ?? null,
+        tags: parseTags(md["hmrbot.tags"] as string | undefined),
+        version: (md["hmrbot.version"] as string | undefined) ?? null,
+        locale: (md["hmrbot.locale"] as string | undefined) ?? null,
+        source: "hmrbot",
+        license: fm.license ?? "Apache-2.0",
+        path: `content/${section}s/${res.slug}/`,
+        upstream_url: null,
+        install: `npx hmrbot ${section} add ${res.slug}`,
+      });
     }
-    const fm = res.doc.frontmatter;
-    const md = fm.metadata ?? {};
-    entries.push({
-      slug: res.slug,
-      section: "skill",
-      name: fm.name,
-      description: fm.description.trim(),
-      category: (md["hmrbot.category"] as string | undefined) ?? null,
-      tags: parseTags(md["hmrbot.tags"] as string | undefined),
-      version: (md["hmrbot.version"] as string | undefined) ?? null,
-      locale: (md["hmrbot.locale"] as string | undefined) ?? null,
-      source: "hmrbot",
-      license: fm.license ?? "Apache-2.0",
-      path: `content/skills/${res.slug}/`,
-      upstream_url: null,
-      install: `npx hmrbot skill add ${res.slug}`,
-    });
   }
   return { entries, errors };
 }
 
 const SOURCE_RANK = (s: string) => (s === "hmrbot" ? 0 : 1);
+const SECTION_RANK: Record<Section, number> = { skill: 0, prompt: 1, software: 2 };
 
-/** Build the registry. `opts.federation` pulls external sources from sources.yaml. */
+/** Build the registry. `opts.federation` pulls external skill sources. */
 export async function buildRegistry(
   repoRoot: string,
   opts: { federation?: boolean } = {},
@@ -105,14 +112,16 @@ export async function buildRegistry(
     rejected = h.rejected;
   }
 
-  // first-party wins on slug collisions; then first federated source wins
-  const bySlug = new Map<string, RegistryEntry>();
+  // first-party wins on (section, slug) collisions; then first federated source
+  const key = (e: RegistryEntry) => `${e.section}/${e.slug}`;
+  const byKey = new Map<string, RegistryEntry>();
   for (const e of [...local, ...federated]) {
-    if (!bySlug.has(e.slug)) bySlug.set(e.slug, e);
+    if (!byKey.has(key(e))) byKey.set(key(e), e);
   }
 
-  const skills = [...bySlug.values()].sort(
+  const skills = [...byKey.values()].sort(
     (a, b) =>
+      SECTION_RANK[a.section] - SECTION_RANK[b.section] ||
       SOURCE_RANK(a.source) - SOURCE_RANK(b.source) ||
       a.source.localeCompare(b.source) ||
       a.slug.localeCompare(b.slug),

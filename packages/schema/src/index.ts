@@ -1,21 +1,37 @@
 /**
- * SKILL.md validation for the hmrbot Hub.
+ * Content validation for the hmrbot Hub.
  *
  * The pure frontmatter schema lives in ./schema (no fs — importable from the
  * Astro config and the browser build). This module adds the filesystem checks:
  * name == folder, category in taxonomy, length cap, recommended headings.
+ *
+ * `skill`, `prompt` and `software` share the same frontmatter; only the file
+ * name and the recommended body headings differ.
  */
 
 import { readFileSync, existsSync } from "node:fs";
 import { basename, join } from "node:path";
 import matter from "gray-matter";
-import { CATEGORIES, isCategory } from "@hmrbot/hub-taxonomy";
+import { CATEGORIES, isCategory, type Section } from "@hmrbot/hub-taxonomy";
 import { skillFrontmatter, MAX_LINES, type SkillFrontmatter } from "./schema.js";
 
 export * from "./schema.js";
 
-export interface SkillDoc {
+export const SECTION_FILE: Record<Section, string> = {
+  skill: "SKILL.md",
+  prompt: "PROMPT.md",
+  software: "ENTRY.md",
+};
+
+const HEADING_HINTS: Record<Section, RegExp[]> = {
+  skill: [/^##\s+.*(when to use|چه وقت)/im, /^##\s+.*(procedure|steps|روش)/im],
+  prompt: [/^##\s+.*(prompt|پرامپت)/im, /^##\s+.*(use|when|کاربرد|چه وقت)/im],
+  software: [],
+};
+
+export interface ContentDoc {
   slug: string;
+  section: Section;
   frontmatter: SkillFrontmatter;
   body: string;
 }
@@ -27,34 +43,36 @@ export interface ValidationIssue {
 
 export interface ValidationResult {
   slug: string;
+  section: Section;
   ok: boolean;
   issues: ValidationIssue[];
-  doc?: SkillDoc;
+  doc?: ContentDoc;
 }
 
 /**
- * Validate one skill directory. Returns issues rather than throwing so a caller
- * can report every problem across every skill in one pass.
+ * Validate one content directory. Returns issues rather than throwing so a
+ * caller can report every problem across every entry in one pass.
  */
-export function validateSkillDir(dir: string): ValidationResult {
+export function validateContentDir(dir: string, section: Section): ValidationResult {
   const slug = basename(dir);
+  const file = SECTION_FILE[section];
   const issues: ValidationIssue[] = [];
   const err = (message: string) => issues.push({ level: "error", message });
   const warn = (message: string) => issues.push({ level: "warning", message });
 
-  const skillPath = join(dir, "SKILL.md");
-  if (!existsSync(skillPath)) {
-    err(`missing SKILL.md`);
-    return { slug, ok: false, issues };
+  const filePath = join(dir, file);
+  if (!existsSync(filePath)) {
+    err(`missing ${file}`);
+    return { slug, section, ok: false, issues };
   }
 
-  const raw = readFileSync(skillPath, "utf8");
+  const raw = readFileSync(filePath, "utf8");
   let parsed: matter.GrayMatterFile<string>;
   try {
     parsed = matter(raw);
   } catch (e) {
     err(`unparseable frontmatter: ${(e as Error).message}`);
-    return { slug, ok: false, issues };
+    return { slug, section, ok: false, issues };
   }
 
   const fm = skillFrontmatter.safeParse(parsed.data);
@@ -62,7 +80,7 @@ export function validateSkillDir(dir: string): ValidationResult {
     for (const issue of fm.error.issues) {
       err(`frontmatter ${issue.path.join(".") || "(root)"}: ${issue.message}`);
     }
-    return { slug, ok: false, issues };
+    return { slug, section, ok: false, issues };
   }
 
   const frontmatter = fm.data;
@@ -76,28 +94,32 @@ export function validateSkillDir(dir: string): ValidationResult {
     err(`hmrbot.category "${category}" is not in the taxonomy (${CATEGORIES.join(", ")})`);
   }
 
-  const section = frontmatter.metadata?.["hmrbot.section"];
-  if (section !== undefined && section !== "skill") {
-    warn(`hmrbot.section is "${section}" for a file under content/skills/`);
+  const declaredSection = frontmatter.metadata?.["hmrbot.section"];
+  if (declaredSection !== undefined && declaredSection !== section) {
+    warn(`hmrbot.section is "${declaredSection}" for a file under content/${section}s/`);
   }
 
   const lineCount = parsed.content.split("\n").length;
   if (lineCount > MAX_LINES) {
-    err(`SKILL.md body is ${lineCount} lines (max ${MAX_LINES}); move detail into references/`);
+    err(`${file} body is ${lineCount} lines (max ${MAX_LINES}); move detail into references/`);
   }
 
-  const body = parsed.content;
-  if (!/^##\s+.*(when to use|چه وقت)/im.test(body)) {
-    warn(`no "When to use" / "چه وقت استفاده شود" heading found`);
-  }
-  if (!/^##\s+.*(procedure|steps|روش)/im.test(body)) {
-    warn(`no "Procedure" / "روش" heading found`);
+  for (const re of HEADING_HINTS[section]) {
+    if (!re.test(parsed.content)) {
+      warn(`no heading matching ${re.source} found`);
+    }
   }
 
   return {
     slug,
+    section,
     ok: issues.every((i) => i.level !== "error"),
     issues,
-    doc: { slug, frontmatter, body },
+    doc: { slug, section, frontmatter, body: parsed.content },
   };
+}
+
+/** Back-compat: validate a skill directory. */
+export function validateSkillDir(dir: string): ValidationResult {
+  return validateContentDir(dir, "skill");
 }

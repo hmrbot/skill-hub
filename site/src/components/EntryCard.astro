@@ -1,0 +1,83 @@
+---
+import type { RegistryEntry } from "../lib/content";
+import { CATEGORY_LABEL, SOURCE_LABEL, githubUrlFor } from "../lib/content";
+
+interface Props {
+  entry: RegistryEntry;
+}
+const { entry } = Astro.props;
+const catLabel = entry.category ? (CATEGORY_LABEL[entry.category] ?? entry.category) : null;
+const isLocal = entry.source === "hmrbot";
+const href = isLocal ? `/${entry.section}/${entry.slug}` : githubUrlFor(entry);
+---
+
+<article
+  class="card"
+  data-slug={entry.slug}
+  data-category={entry.category ?? ""}
+  data-source={entry.source}
+  data-tags={entry.tags.join(" ")}
+  data-name={entry.name}
+  data-search={`${entry.name} ${entry.description} ${entry.tags.join(" ")}`.toLowerCase()}
+>
+  <a
+    href={href}
+    class="card__title"
+    {...isLocal ? {} : { target: "_blank", rel: "noopener" }}
+  >{entry.name}{isLocal ? "" : " ↗"}</a>
+  <p class="card__desc">{entry.description}</p>
+  <div class="card__meta">
+    {
+      catLabel && entry.category && (
+        <span class="chip chip--cat" style={`--chip-hue: var(--cat-${entry.category})`}>{catLabel}</span>
+      )
+    }
+    <span class="chip">{SOURCE_LABEL[entry.source] ?? entry.source}</span>
+    {entry.version && <span class="chip">v{entry.version}</span>}
+    <span class="chip">{entry.license}</span>
+  </div>
+</article>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    padding: var(--sp-6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    transition: border-color 0.12s;
+  }
+  .card:hover {
+    border-color: var(--border-strong);
+  }
+  .card__title {
+    font-family: var(--mono);
+    font-size: var(--fs-lg);
+    font-weight: 600;
+    color: var(--text);
+    direction: ltr;
+    text-align: start;
+  }
+  .card__title:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .card__desc {
+    margin: 0;
+    color: var(--text-2);
+    font-size: var(--fs-sm);
+    line-height: 1.8;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    margin-top: auto;
+  }
+</style>

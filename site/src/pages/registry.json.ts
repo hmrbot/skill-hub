@@ -1,5 +1,5 @@
 import type { APIRoute } from "astro";
-import { getRegistry } from "../lib/skills";
+import { getRegistry } from "../lib/content";
 
 // The index the CLI (`npx hmrbot`) fetches from https://hub.hmrbot.com/registry.json
 export const GET: APIRoute = () => {

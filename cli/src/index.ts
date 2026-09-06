@@ -11,16 +11,19 @@ import {
 
 const VERSION = "0.1.0";
 
-const HELP = `hmrbot — install agent skills from the hmrbot Hub (hub.hmrbot.com)
+const HELP = `hmrbot — install agent skills & prompts from the hmrbot Hub (hub.hmrbot.com)
 
 usage:
-  npx hmrbot skill add <slug> [options]     install a skill
-  npx hmrbot skill remove <slug>            uninstall a skill
-  npx hmrbot skill update [<slug>]          update one, or all hmrbot-installed skills
-  npx hmrbot skill search <query>           search the catalog
-  npx hmrbot skill list                     list installed skills
-  npx hmrbot registry                       show catalog summary
-  npx hmrbot open [skill|prompt|software]   open the catalog in a browser
+  npx hmrbot skill  add <slug> [options]     install a skill
+  npx hmrbot prompt add <slug> [options]     install a prompt
+  npx hmrbot <skill|prompt> remove <slug>    uninstall
+  npx hmrbot <skill|prompt> update [<slug>]  update one, or all installed
+  npx hmrbot <skill|prompt> search <query>   search the catalog
+  npx hmrbot <skill|prompt> list             list installed
+  npx hmrbot registry                        catalog summary
+  npx hmrbot open [skill|prompt|software]    open the catalog in a browser
+
+  (the section word is optional for search/list/registry/update — omit to span both)
 
 options:
   --agent <claude|hermes|codex|opencode|agents>   install target (default: auto-detect, else "agents")
@@ -45,7 +48,6 @@ async function main(argv: string[]): Promise<number> {
       registry: { type: "string" },
       force: { type: "boolean" },
       refresh: { type: "boolean" },
-      all: { type: "boolean" },
       help: { type: "boolean", short: "h" },
       version: { type: "boolean", short: "v" },
     },
@@ -60,18 +62,22 @@ async function main(argv: string[]): Promise<number> {
     return positionals.length === 0 && !values.help ? 1 : 0;
   }
 
+  // `<section> <verb> …` or a bare top-level command
+  let section: "skill" | "prompt" | undefined;
+  let [a, b] = positionals;
+  if (a === "skill" || a === "prompt") {
+    section = a;
+    [a, b] = [positionals[1], positionals[2]];
+  }
+
   const ctx = {
+    section,
     registrySource: values.registry,
     refresh: values.refresh,
     agent: values.agent,
     dir: values.dir,
     force: values.force,
-    all: values.all,
   };
-
-  // `skill <sub>` or a bare top-level command
-  let [a, b, c] = positionals;
-  if (a === "skill" || a === "prompt") [a, b, c] = [b, c, positionals[3]];
 
   switch (a) {
     case "add":

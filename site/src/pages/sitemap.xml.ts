@@ -1,15 +1,14 @@
 import type { APIRoute } from "astro";
-import { getSkills } from "../lib/skills";
+import { getEntries } from "../lib/content";
 
 export const GET: APIRoute = ({ site }) => {
   const base = site?.href.replace(/\/$/, "") ?? "https://hub.hmrbot.com";
+  const local = getEntries().filter((e) => e.source === "hmrbot");
   const urls = [
     "/",
     "/skill",
-    // only first-party skills have detail pages
-    ...getSkills()
-      .filter((s) => s.source === "hmrbot")
-      .map((s) => `/skill/${s.slug}`),
+    ...(local.some((e) => e.section === "prompt") ? ["/prompt"] : []),
+    ...local.map((e) => `/${e.section}/${e.slug}`),
   ];
 
   const body = `<?xml version="1.0" encoding="UTF-8"?>

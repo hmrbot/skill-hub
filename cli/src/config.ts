@@ -8,7 +8,7 @@ export const REGISTRY_URLS = [
   "https://raw.githubusercontent.com/hmrbot/skill-hub/main/registry.json",
 ];
 
-/** The repo that holds first-party (`source: "hmrbot"`) skills. */
+/** The repo that holds first-party (`source: "hmrbot"`) content. */
 export const HOME_REPO = { owner: "hmrbot", repo: "skill-hub", ref: "main" };
 
 export const CACHE_DIR = join(homedir(), ".hmrbot", "cache");
@@ -19,13 +19,14 @@ export const REGISTRY_TTL_MS = 6 * 60 * 60 * 1000; // 6h
 export const GITHUB_TOKEN =
   process.env.HMRBOT_GITHUB_TOKEN || process.env.GITHUB_TOKEN || "";
 
-/** Install-target presets. Relative paths resolve against cwd. */
-export const AGENT_TARGETS: Record<string, string> = {
-  claude: ".claude/skills",
-  agents: ".agents/skills",
-  hermes: join(homedir(), ".hermes", "skills"),
-  codex: join(homedir(), ".codex", "skills"),
-  opencode: ".opencode/skills",
+/** Base dir per agent preset. Section (`skills` / `prompts`) is appended.
+ *  Relative paths resolve against cwd. */
+export const AGENT_BASES: Record<string, string> = {
+  claude: ".claude",
+  agents: ".agents",
+  hermes: join(homedir(), ".hermes"),
+  codex: join(homedir(), ".codex"),
+  opencode: ".opencode",
 };
 
 export const DEFAULT_AGENT = "agents";

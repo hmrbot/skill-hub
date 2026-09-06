@@ -1,0 +1,190 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import { getEntries, SECTION_META, CATEGORY_LABEL, SOURCE_LABEL, githubUrlFor, type Section } from "../../lib/content";
+
+export async function getStaticPaths() {
+  const skills = await getCollection("skills");
+  const prompts = await getCollection("prompts");
+  return [
+    ...skills.map((entry) => ({ params: { section: "skill", slug: entry.id }, props: { entry, section: "skill" as const } })),
+    ...prompts.map((entry) => ({ params: { section: "prompt", slug: entry.id }, props: { entry, section: "prompt" as const } })),
+  ];
+}
+
+const { entry, section } = Astro.props;
+const { Content } = await render(entry);
+
+const meta = SECTION_META[section as Section];
+const item = getEntries(section as Section).find((s) => s.slug === entry.id)!;
+const catLabel = item.category ? (CATEGORY_LABEL[item.category] ?? item.category) : null;
+const install = item.install;
+const ghUrl = githubUrlFor(item);
+---
+
+<Base title={item.name} description={item.description} path={`/${section}/${item.slug}`}>
+  <article class="wrap page">
+    <nav class="crumb"><a href={`/${section}`}>{meta.title}</a> / <span>{item.name}</span></nav>
+
+    <header class="ph">
+      <h1>{item.name}</h1>
+      <p class="ph__desc">{item.description}</p>
+      <div class="ph__meta">
+        {
+          catLabel && item.category && (
+            <span class="chip chip--cat" style={`--chip-hue: var(--cat-${item.category})`}>{catLabel}</span>
+          )
+        }
+        <span class="chip">{SOURCE_LABEL[item.source] ?? item.source}</span>
+        {item.version && <span class="chip">v{item.version}</span>}
+        <span class="chip">{item.license}</span>
+        {item.tags.map((t) => <span class="chip">{t}</span>)}
+      </div>
+    </header>
+
+    <div class="install">
+      <code>{install}</code>
+      <button class="btn" data-copy={install}>کپی</button>
+    </div>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <footer class="pf">
+      <a href={ghUrl} rel="noopener">مشاهدهٔ منبع در GitHub ↗</a>
+    </footer>
+  </article>
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copy ?? "");
+        const old = btn.textContent;
+        btn.textContent = "کپی شد";
+        setTimeout(() => (btn.textContent = old), 1500);
+      } catch {
+        /* clipboard blocked */
+      }
+    });
+  });
+
+  // On prompt pages, add a copy button to each fenced code block.
+  document.querySelectorAll<HTMLPreElement>(".prose pre").forEach((pre) => {
+    const b = document.createElement("button");
+    b.className = "code-copy";
+    b.type = "button";
+    b.textContent = "کپی";
+    b.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(pre.innerText);
+        b.textContent = "کپی شد";
+        setTimeout(() => (b.textContent = "کپی"), 1500);
+      } catch {}
+    });
+    pre.style.position = "relative";
+    pre.appendChild(b);
+  });
+</script>
+
+<style>
+  .page {
+    max-width: var(--prose);
+  }
+  .crumb {
+    font-size: var(--fs-sm);
+    color: var(--muted);
+    margin-bottom: var(--sp-6);
+  }
+  .crumb span {
+    font-family: var(--mono);
+    direction: ltr;
+  }
+  .ph h1 {
+    font-family: var(--mono);
+    direction: ltr;
+    text-align: start;
+    font-size: var(--fs-2xl);
+  }
+  .ph__desc {
+    color: var(--text-2);
+    font-size: var(--fs-lg);
+  }
+  .ph__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+
+  .install {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    margin: var(--sp-6) 0 var(--sp-8);
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .install code {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: var(--fs-sm);
+    overflow-x: auto;
+  }
+
+  /* prompt bodies are often RTL prose with LTR tokens — let each line pick */
+  .prose :global(pre),
+  .prose :global(pre > code) {
+    direction: rtl;
+    unicode-bidi: plaintext;
+    text-align: start;
+  }
+
+  .prose :global(h2) {
+    margin-top: var(--sp-8);
+    padding-bottom: var(--sp-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .prose :global(h3) {
+    margin-top: var(--sp-6);
+  }
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-inline-start: 1.4em;
+  }
+  .prose :global(li) {
+    margin-bottom: var(--sp-2);
+  }
+  .prose :global(a) {
+    text-decoration: underline;
+  }
+  .prose :global(.code-copy) {
+    position: absolute;
+    inset-inline-end: var(--sp-2);
+    inset-block-start: var(--sp-2);
+    padding: 2px var(--sp-2);
+    font: inherit;
+    font-size: var(--fs-xs);
+    color: var(--text-2);
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .prose :global(.code-copy:hover) {
+    color: var(--text);
+    border-color: var(--accent);
+  }
+
+  .pf {
+    margin-top: var(--sp-12);
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--border);
+    font-size: var(--fs-sm);
+  }
+</style>

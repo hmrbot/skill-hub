@@ -1,6 +1,7 @@
 ---
+import { getPrompts } from "../lib/content";
 const { pathname } = Astro.url;
-const isSkill = pathname.startsWith("/skill");
+const hasPrompts = getPrompts().length > 0;
 ---
 
 <header class="site-header">
@@ -10,8 +11,14 @@ const isSkill = pathname.startsWith("/skill");
       <span class="brand__name">hmrbot Hub</span>
     </a>
     <nav class="nav">
-      <a href="/skill" aria-current={isSkill ? "page" : undefined}>مهارت‌ها</a>
-      <span class="nav__soon">پرامپت‌ها</span>
+      <a href="/skill" aria-current={pathname.startsWith("/skill") ? "page" : undefined}>مهارت‌ها</a>
+      {
+        hasPrompts ? (
+          <a href="/prompt" aria-current={pathname.startsWith("/prompt") ? "page" : undefined}>پرامپت‌ها</a>
+        ) : (
+          <span class="nav__soon">پرامپت‌ها</span>
+        )
+      }
       <span class="nav__soon">نرم‌افزار</span>
       <a class="nav__gh" href="https://github.com/hmrbot/skill-hub" rel="noopener">GitHub</a>
     </nav>

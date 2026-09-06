@@ -8,7 +8,7 @@ import {
   statSync,
 } from "node:fs";
 import { join, dirname, resolve, relative } from "node:path";
-import { HOME_REPO, GITHUB_TOKEN, AGENT_TARGETS, DEFAULT_AGENT } from "./config.js";
+import { HOME_REPO, GITHUB_TOKEN, AGENT_BASES, DEFAULT_AGENT } from "./config.js";
 import type { RegistryEntry, InstalledMeta } from "./types.js";
 
 interface GhSource {
@@ -112,13 +112,21 @@ export function copyLocalSkill(repoRoot: string, src: GhSource, destDir: string)
   return count;
 }
 
-/** Where a skill should be installed. */
-export function resolveTarget(opts: { agent?: string; dir?: string }): string {
+/** Where content of a given section should be installed. */
+export function resolveTarget(opts: {
+  section: "skill" | "prompt" | "software";
+  agent?: string;
+  dir?: string;
+}): string {
   if (opts.dir) return resolve(opts.dir);
   const key = opts.agent ?? detectAgent() ?? DEFAULT_AGENT;
-  const preset = AGENT_TARGETS[key];
-  if (!preset) throw new Error(`unknown --agent "${key}" (${Object.keys(AGENT_TARGETS).join(", ")})`);
-  return resolve(preset);
+  const base = AGENT_BASES[key];
+  if (!base) throw new Error(`unknown --agent "${key}" (${Object.keys(AGENT_BASES).join(", ")})`);
+  return resolve(base, `${opts.section}s`);
+}
+
+export function agentRoots(section: "skill" | "prompt" | "software"): string[] {
+  return Object.values(AGENT_BASES).map((b) => resolve(b, `${section}s`));
 }
 
 function detectAgent(): string | null {

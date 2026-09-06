@@ -1,19 +1,25 @@
 ---
 import Base from "../../layouts/Base.astro";
-import SkillCard from "../../components/SkillCard.astro";
-import { getSkills, CATEGORY_LABEL, SOURCE_LABEL } from "../../lib/skills";
+import EntryCard from "../../components/EntryCard.astro";
+import { getEntries, SECTION_META, CATEGORY_LABEL, SOURCE_LABEL, type Section } from "../../lib/content";
 
-const skills = getSkills();
+export function getStaticPaths() {
+  return (["skill", "prompt"] as const).map((section) => ({ params: { section } }));
+}
 
-const categories = [...new Set(skills.map((s) => s.category).filter(Boolean))].sort() as string[];
-const sources = [...new Set(skills.map((s) => s.source))].sort();
-const tags = [...new Set(skills.flatMap((s) => s.tags))].sort();
+const section = Astro.params.section as Section;
+const meta = SECTION_META[section];
+const entries = getEntries(section);
+
+const categories = [...new Set(entries.map((s) => s.category).filter(Boolean))].sort() as string[];
+const sources = [...new Set(entries.map((s) => s.source))].sort();
+const tags = [...new Set(entries.flatMap((s) => s.tags))].sort();
 ---
 
-<Base title="مهارت‌ها" description="کتابخانهٔ باز agent skill — فارسی، با فرمت استاندارد agentskills.io." path="/skill">
+<Base title={meta.title} description={meta.blurb} path={`/${section}`}>
   <div class="wrap head">
-    <h1>مهارت‌ها</h1>
-    <p><span data-count>{skills.length}</span> مهارت · قابل نصب با <code>npx hmrbot skill add</code></p>
+    <h1>{meta.title}</h1>
+    <p><span data-count>{entries.length}</span> {meta.one} · نصب با <code>{meta.install}</code></p>
   </div>
 
   <div class="wrap layout" id="catalog">
@@ -78,9 +84,9 @@ const tags = [...new Set(skills.flatMap((s) => s.tags))].sort();
 
     <div class="results">
       <div class="grid" data-grid>
-        {skills.map((skill) => <SkillCard skill={skill} />)}
+        {entries.map((entry) => <EntryCard entry={entry} />)}
       </div>
-      <p class="empty" data-empty hidden>هیچ مهارتی با این فیلترها پیدا نشد.</p>
+      <p class="empty" data-empty hidden>هیچ نتیجه‌ای با این فیلترها پیدا نشد.</p>
     </div>
   </div>
 </Base>
