@@ -1,0 +1,55 @@
+name: publish-cli
+
+# Publishes cli/ to npm as `hmrbot` when its version in package.json changes
+# (or on manual dispatch). Requires the NPM_TOKEN repo secret.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "cli/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # npm provenance
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: skip if this version is already on npm
+        id: check
+        run: |
+          NAME=$(node -p "require('./cli/package.json').name")
+          VER=$(node -p "require('./cli/package.json').version")
+          if npm view "$NAME@$VER" version >/dev/null 2>&1; then
+            echo "published=true" >> "$GITHUB_OUTPUT"
+            echo "$NAME@$VER is already published — nothing to do"
+          else
+            echo "published=false" >> "$GITHUB_OUTPUT"
+            echo "will publish $NAME@$VER"
+          fi
+
+      - name: build + typecheck
+        if: steps.check.outputs.published == 'false'
+        run: |
+          pnpm --filter hmrbot typecheck
+          pnpm --filter hmrbot build
+
+      - name: publish
+        if: steps.check.outputs.published == 'false'
+        run: npm publish --provenance --access public
+        working-directory: cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
