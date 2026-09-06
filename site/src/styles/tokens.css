@@ -1,0 +1,65 @@
+/*
+ * hmrbot Hub — design tokens.
+ * This is the single place to retheme the catalog. Dark-first; one accent.
+ */
+:root {
+  /* palette */
+  --bg: #0d1017;
+  --bg-2: #12161f;
+  --surface: #161b26;
+  --surface-2: #1c2230;
+  --border: #262d3b;
+  --border-strong: #333c4d;
+
+  --text: #e7eaf0;
+  --text-2: #b9c0cd;
+  --muted: #7d8798;
+
+  --accent: #5b9dff;
+  --accent-strong: #3d86f5;
+  --accent-ring: color-mix(in srgb, var(--accent) 28%, transparent);
+  --on-accent: #0b1220;
+
+  --ok: #3fb950;
+  --warn: #d29922;
+
+  /* type */
+  --font: "Vazirmatn Variable", ui-sans-serif, system-ui, "Segoe UI", Tahoma, sans-serif;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --fs-xs: 0.78rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-lg: 1.15rem;
+  --fs-xl: 1.5rem;
+  --fs-2xl: 2rem;
+  --fs-3xl: 2.6rem;
+
+  /* space + shape */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-6: 1.5rem;
+  --sp-8: 2rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+  --radius: 10px;
+  --radius-lg: 16px;
+  --wide: 1160px;
+  --prose: 760px;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+/* category accent hues — used for card chips */
+:root {
+  --cat-prompting: #a78bfa;
+  --cat-rag: #5b9dff;
+  --cat-agents: #34d399;
+  --cat-coding: #f472b6;
+  --cat-content: #fbbf24;
+  --cat-seo: #22d3ee;
+  --cat-data: #818cf8;
+  --cat-automation: #fb923c;
+  --cat-research: #94a3b8;
+}

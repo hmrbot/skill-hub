@@ -1,0 +1,17 @@
+{
+  "name": "@hmrbot/hub-site",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check"
+  },
+  "dependencies": {
+    "@fontsource-variable/vazirmatn": "^5.1.0",
+    "@hmrbot/hub-registry": "workspace:*",
+    "astro": "^7.2.0"
+  }
+}

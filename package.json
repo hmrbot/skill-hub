@@ -11,7 +11,9 @@
   "scripts": {
     "validate": "tsx scripts/validate.ts",
     "build:registry": "tsx scripts/build-registry.ts",
-    "new:skill": "tsx scripts/new-skill.ts"
+    "new:skill": "tsx scripts/new-skill.ts",
+    "site:dev": "pnpm --filter @hmrbot/hub-site dev",
+    "site:build": "pnpm --filter @hmrbot/hub-site build"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",

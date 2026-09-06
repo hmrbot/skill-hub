@@ -1,0 +1,77 @@
+---
+import type { RegistryEntry } from "../lib/skills";
+import { CATEGORY_LABEL, SOURCE_LABEL } from "../lib/skills";
+
+interface Props {
+  skill: RegistryEntry;
+}
+const { skill } = Astro.props;
+const catLabel = skill.category ? (CATEGORY_LABEL[skill.category] ?? skill.category) : null;
+---
+
+<article
+  class="card"
+  data-slug={skill.slug}
+  data-category={skill.category ?? ""}
+  data-source={skill.source}
+  data-tags={skill.tags.join(" ")}
+  data-name={skill.name}
+  data-search={`${skill.name} ${skill.description} ${skill.tags.join(" ")}`.toLowerCase()}
+>
+  <a href={`/skill/${skill.slug}`} class="card__title">{skill.name}</a>
+  <p class="card__desc">{skill.description}</p>
+  <div class="card__meta">
+    {
+      catLabel && skill.category && (
+        <span class="chip chip--cat" style={`--chip-hue: var(--cat-${skill.category})`}>{catLabel}</span>
+      )
+    }
+    <span class="chip">{SOURCE_LABEL[skill.source] ?? skill.source}</span>
+    {skill.version && <span class="chip">v{skill.version}</span>}
+    <span class="chip">{skill.license}</span>
+  </div>
+</article>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    padding: var(--sp-6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    transition: border-color 0.12s, transform 0.12s;
+  }
+  .card:hover {
+    border-color: var(--border-strong);
+  }
+  .card__title {
+    font-family: var(--mono);
+    font-size: var(--fs-lg);
+    font-weight: 600;
+    color: var(--text);
+    direction: ltr;
+    text-align: start;
+  }
+  .card__title:hover {
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .card__desc {
+    margin: 0;
+    color: var(--text-2);
+    font-size: var(--fs-sm);
+    line-height: 1.8;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    margin-top: auto;
+  }
+</style>

@@ -1,0 +1,152 @@
+---
+import Base from "../layouts/Base.astro";
+import { getSkills } from "../lib/skills";
+
+const skillCount = getSkills().length;
+
+const sections = [
+  {
+    key: "skill",
+    title: "مهارت‌ها",
+    en: "Skills",
+    href: "/skill",
+    active: true,
+    count: skillCount,
+    desc: "بسته‌های دستورالعمل با فرمت استاندارد agentskills.io — قابل نصب در Claude Code، Hermes، Codex و بقیه.",
+  },
+  {
+    key: "prompt",
+    title: "پرامپت‌ها",
+    en: "Prompts",
+    href: null,
+    active: false,
+    desc: "پرامپت‌های آمادهٔ فارسی، ساختاریافته و تست‌شده. به‌زودی.",
+  },
+  {
+    key: "software",
+    title: "نرم‌افزار",
+    en: "Software",
+    href: null,
+    active: false,
+    desc: "دایرکتوری ابزارها و سرویس‌های هوش مصنوعی. به‌زودی.",
+  },
+];
+---
+
+<Base title="hmrbot Hub" path="/">
+  <section class="wrap hero">
+    <p class="hero__kicker">hmrbot hub</p>
+    <h1 class="hero__title">مهارت، پرامپت و ابزارِ آمادهٔ هوش مصنوعی</h1>
+    <p class="hero__lead">
+      همه‌چیز فایل‌های Markdown در git است — بدون دیتابیس. کاتالوگ را مرور کن،
+      یا با یک دستور نصب کن.
+    </p>
+    <a class="btn btn--primary hero__cta" href="/skill">مرور مهارت‌ها ←</a>
+  </section>
+
+  <section class="wrap grid">
+    {
+      sections.map((s) => (
+        <a
+          class:list={["scard", { "scard--soon": !s.active }]}
+          href={s.href ?? undefined}
+          aria-disabled={!s.active}
+        >
+          <div class="scard__head">
+            <h2>{s.title}</h2>
+            {s.active ? <span class="scard__count">{s.count}</span> : <span class="scard__soon">به‌زودی</span>}
+          </div>
+          <p class="scard__desc">{s.desc}</p>
+          <span class="scard__en">{s.en}</span>
+        </a>
+      ))
+    }
+  </section>
+</Base>
+
+<style>
+  .hero {
+    padding-block: var(--sp-8) var(--sp-12);
+    text-align: center;
+  }
+  .hero__kicker {
+    font-family: var(--mono);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    font-size: var(--fs-xs);
+    color: var(--accent);
+    margin-bottom: var(--sp-3);
+  }
+  .hero__title {
+    font-size: var(--fs-3xl);
+    max-width: 18ch;
+    margin-inline: auto;
+  }
+  .hero__lead {
+    max-width: 52ch;
+    margin-inline: auto;
+    color: var(--text-2);
+  }
+  .hero__cta {
+    margin-top: var(--sp-4);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--sp-4);
+  }
+  .scard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    padding: var(--sp-6);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    color: var(--text);
+    transition: border-color 0.12s;
+  }
+  .scard:hover {
+    border-color: var(--accent);
+    text-decoration: none;
+  }
+  .scard--soon {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+  .scard__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .scard__head h2 {
+    margin: 0;
+    font-size: var(--fs-xl);
+  }
+  .scard__count {
+    font-family: var(--mono);
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .scard__soon {
+    font-size: var(--fs-xs);
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 1px 8px;
+  }
+  .scard__desc {
+    margin: 0;
+    color: var(--text-2);
+    font-size: var(--fs-sm);
+    line-height: 1.8;
+  }
+  .scard__en {
+    font-family: var(--mono);
+    font-size: var(--fs-xs);
+    color: var(--muted);
+    direction: ltr;
+    text-align: start;
+  }
+</style>

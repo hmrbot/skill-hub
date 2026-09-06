@@ -1,0 +1,43 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap inner">
+    <p>
+      hmrbot Hub — کتابخانهٔ باز مهارت‌ها. محتوا با لایسنس
+      <a href="https://github.com/hmrbot/skill-hub/blob/main/LICENSE" rel="noopener">Apache-2.0</a>.
+    </p>
+    <p class="links">
+      <a href="/skill">مهارت‌ها</a>
+      <a href="/registry.json">registry.json</a>
+      <a href="/llms.txt">llms.txt</a>
+      <a href="https://github.com/hmrbot/skill-hub" rel="noopener">مخزن</a>
+    </p>
+    <p class="fine">© {year} hmrbot · ساخته‌شده با Astro</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--border);
+    background: var(--bg-2);
+    padding-block: var(--sp-8);
+    font-size: var(--fs-sm);
+    color: var(--text-2);
+  }
+  .inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-4);
+  }
+  .fine {
+    color: var(--muted);
+    margin: 0;
+  }
+</style>

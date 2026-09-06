@@ -1,0 +1,95 @@
+---
+const { pathname } = Astro.url;
+const isSkill = pathname.startsWith("/skill");
+---
+
+<header class="site-header">
+  <div class="wrap bar">
+    <a href="/" class="brand">
+      <span class="brand__mark">hb</span>
+      <span class="brand__name">hmrbot Hub</span>
+    </a>
+    <nav class="nav">
+      <a href="/skill" aria-current={isSkill ? "page" : undefined}>مهارت‌ها</a>
+      <span class="nav__soon">پرامپت‌ها</span>
+      <span class="nav__soon">نرم‌افزار</span>
+      <a class="nav__gh" href="https://github.com/hmrbot/skill-hub" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    gap: var(--sp-4);
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    color: var(--text);
+    font-weight: 700;
+  }
+  .brand:hover {
+    text-decoration: none;
+  }
+  .brand__mark {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--accent);
+    color: var(--on-accent);
+    font-family: var(--mono);
+    font-size: var(--fs-sm);
+    font-weight: 700;
+  }
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+    font-size: var(--fs-sm);
+  }
+  .nav a {
+    color: var(--text-2);
+  }
+  .nav a:hover,
+  .nav a[aria-current="page"] {
+    color: var(--text);
+    text-decoration: none;
+  }
+  .nav__soon {
+    color: var(--muted);
+    cursor: default;
+  }
+  .nav__soon::after {
+    content: "به‌زودی";
+    margin-inline-start: var(--sp-1);
+    font-size: 0.7em;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 1px 5px;
+  }
+  .nav__gh {
+    border-inline-start: 1px solid var(--border);
+    padding-inline-start: var(--sp-4);
+  }
+  @media (max-width: 620px) {
+    .nav__soon {
+      display: none;
+    }
+  }
+</style>

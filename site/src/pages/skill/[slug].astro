@@ -1,0 +1,143 @@
+---
+import { getCollection, render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import { getSkills, CATEGORY_LABEL, SOURCE_LABEL, githubUrlFor } from "../../lib/skills";
+
+export async function getStaticPaths() {
+  const entries = await getCollection("skills");
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const skill = getSkills().find((s) => s.slug === entry.id)!;
+const catLabel = skill.category ? (CATEGORY_LABEL[skill.category] ?? skill.category) : null;
+const install = skill.install;
+const ghUrl = githubUrlFor(skill);
+---
+
+<Base title={skill.name} description={skill.description} path={`/skill/${skill.slug}`}>
+  <article class="wrap page">
+    <nav class="crumb"><a href="/skill">مهارت‌ها</a> / <span>{skill.name}</span></nav>
+
+    <header class="ph">
+      <h1>{skill.name}</h1>
+      <p class="ph__desc">{skill.description}</p>
+      <div class="ph__meta">
+        {
+          catLabel && skill.category && (
+            <span class="chip chip--cat" style={`--chip-hue: var(--cat-${skill.category})`}>{catLabel}</span>
+          )
+        }
+        <span class="chip">{SOURCE_LABEL[skill.source] ?? skill.source}</span>
+        {skill.version && <span class="chip">v{skill.version}</span>}
+        <span class="chip">{skill.license}</span>
+        {skill.tags.map((t) => <span class="chip">{t}</span>)}
+      </div>
+    </header>
+
+    <div class="install">
+      <code id="install-cmd">{install}</code>
+      <button class="btn" data-copy={install}>کپی</button>
+    </div>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <footer class="pf">
+      <a href={ghUrl} rel="noopener">مشاهدهٔ منبع در GitHub ↗</a>
+    </footer>
+  </article>
+</Base>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(btn.dataset.copy ?? "");
+        const old = btn.textContent;
+        btn.textContent = "کپی شد";
+        setTimeout(() => (btn.textContent = old), 1500);
+      } catch {
+        /* clipboard blocked — no-op */
+      }
+    });
+  });
+</script>
+
+<style>
+  .page {
+    max-width: var(--prose);
+  }
+  .crumb {
+    font-size: var(--fs-sm);
+    color: var(--muted);
+    margin-bottom: var(--sp-6);
+  }
+  .crumb span {
+    font-family: var(--mono);
+    direction: ltr;
+  }
+  .ph h1 {
+    font-family: var(--mono);
+    direction: ltr;
+    text-align: start;
+    font-size: var(--fs-2xl);
+  }
+  .ph__desc {
+    color: var(--text-2);
+    font-size: var(--fs-lg);
+  }
+  .ph__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+
+  .install {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+    margin: var(--sp-6) 0 var(--sp-8);
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--bg-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+  .install code {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: var(--fs-sm);
+    overflow-x: auto;
+  }
+
+  .prose :global(h2) {
+    margin-top: var(--sp-8);
+    padding-bottom: var(--sp-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .prose :global(h3) {
+    margin-top: var(--sp-6);
+  }
+  .prose :global(ul),
+  .prose :global(ol) {
+    padding-inline-start: 1.4em;
+  }
+  .prose :global(li) {
+    margin-bottom: var(--sp-2);
+  }
+  .prose :global(a) {
+    text-decoration: underline;
+  }
+
+  .pf {
+    margin-top: var(--sp-12);
+    padding-top: var(--sp-6);
+    border-top: 1px solid var(--border);
+    font-size: var(--fs-sm);
+  }
+</style>

@@ -1,48 +1,18 @@
 /**
  * SKILL.md validation for the hmrbot Hub.
  *
- * `agentskills.io` requires only `name` + `description`. The hmrbot layer adds
- * `metadata.hmrbot.*` conventions and a few repo rules (name == folder,
- * category in taxonomy, length cap).
+ * The pure frontmatter schema lives in ./schema (no fs — importable from the
+ * Astro config and the browser build). This module adds the filesystem checks:
+ * name == folder, category in taxonomy, length cap, recommended headings.
  */
 
 import { readFileSync, existsSync } from "node:fs";
 import { basename, join } from "node:path";
 import matter from "gray-matter";
-import { z } from "zod";
-import { CATEGORIES, SECTIONS, isCategory } from "@hmrbot/hub-taxonomy";
+import { CATEGORIES, isCategory } from "@hmrbot/hub-taxonomy";
+import { skillFrontmatter, MAX_LINES, type SkillFrontmatter } from "./schema.js";
 
-export const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
-const SEMVER_RE = /^\d+\.\d+\.\d+$/;
-const MAX_LINES = 500;
-
-/** agentskills.io frontmatter + hmrbot metadata conventions. */
-export const skillFrontmatter = z
-  .object({
-    name: z
-      .string()
-      .min(1)
-      .max(64)
-      .regex(SLUG_RE, "lowercase a-z 0-9 with single hyphens only, no leading/trailing hyphen"),
-    description: z.string().min(1).max(1024),
-    license: z.string().max(200).optional(),
-    compatibility: z.string().min(1).max(500).optional(),
-    "allowed-tools": z.string().optional(),
-    metadata: z
-      .object({
-        "hmrbot.section": z.enum(SECTIONS).optional(),
-        "hmrbot.category": z.string().optional(),
-        "hmrbot.tags": z.string().optional(),
-        "hmrbot.version": z.string().regex(SEMVER_RE, "must be semver x.y.z").optional(),
-        "hmrbot.locale": z.string().optional(),
-        "hmrbot.maintainer": z.string().optional(),
-      })
-      .passthrough()
-      .optional(),
-  })
-  .passthrough();
-
-export type SkillFrontmatter = z.infer<typeof skillFrontmatter>;
+export * from "./schema.js";
 
 export interface SkillDoc {
   slug: string;
