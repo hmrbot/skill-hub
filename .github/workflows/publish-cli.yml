@@ -1,7 +1,13 @@
 name: publish-cli
 
-# Publishes cli/ to npm as `hmrbot` when its version in package.json changes
-# (or on manual dispatch). Requires the NPM_TOKEN repo secret.
+# Publishes cli/ to npm as `hmrbot`.
+#
+# Auth = npm Trusted Publishing (OIDC) — NO token, NO NPM_TOKEN secret.
+# One-time setup (see Response doc "انتشار CLI روی npm"):
+#   1. publish v0.1.0 once manually from your machine (`npm publish` in cli/)
+#   2. npmjs.com -> package `hmrbot` -> Settings -> Trusted Publisher:
+#      GitHub Actions / owner: hmrbot / repo: skill-hub / workflow: publish-cli.yml
+# After that this workflow publishes every version bump on its own.
 
 on:
   push:
@@ -12,7 +18,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write # npm provenance
+  id-token: write # OIDC — required for trusted publishing + provenance
 
 jobs:
   publish:
@@ -25,6 +31,9 @@ jobs:
           node-version: 22
           cache: pnpm
           registry-url: https://registry.npmjs.org
+
+      # Trusted publishing (OIDC) needs npm >= 11.5.1; setup-node ships older.
+      - run: npm install -g npm@latest
 
       - run: pnpm install --frozen-lockfile
 
@@ -49,7 +58,5 @@ jobs:
 
       - name: publish
         if: steps.check.outputs.published == 'false'
-        run: npm publish --provenance --access public
+        run: npm publish --access public
         working-directory: cli
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
