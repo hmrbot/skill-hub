@@ -1,103 +1,217 @@
 ---
-import { getPrompts } from "../lib/content";
-const { pathname } = Astro.url;
-const hasPrompts = getPrompts().length > 0;
----
+// src/components/Header.astro — shared site chrome, used by every page via HmrLayout
+// (the homepage included, since 2026-09-07).
+// Keep the 5 sites' copies in sync; only the logo asset path (and this note) is
+// site-specific.
+//
+// AI_SEARCH_ENDPOINT is the Cloudflare AI Search public endpoint host. It is a
+// public, browser-exposed value (not a secret) — the search-modal snippet below
+// calls it directly from the client. Instance: `hmrbot-site`, /search only.
+const AI_SEARCH_ENDPOINT = "420aa84f-5476-4099-a8a2-afa4fdedbb6e.search.ai.cloudflare.com";
 
-<header class="site-header">
-  <div class="wrap bar">
-    <a href="/" class="brand">
-      <span class="brand__mark">hb</span>
-      <span class="brand__name">hmrbot Hub</span>
+const nav = [
+  { href: "https://hmrbot.com/",          label: "خانه" },
+  { href: "https://blog.hmrbot.com",      label: "وبلاگ" },
+  { href: "https://ai.hmrbot.com/chatbot", label: "ابزارها" },
+  { href: "https://hub.hmrbot.com",       label: "مخزن" },
+  { href: "https://hmrbot.com/glossary",  label: "واژه‌نامه" },
+];
+const extra = [
+  { href: "/about",   label: "درباره ما" },
+  { href: "/contact", label: "تماس با ما" },
+];
+---
+<header class="hmr-header" dir="rtl">
+  <div class="hmr-header__bar hmr-container-wide">
+    <a class="hmr-header__logo" href="/">
+      <img src="/assets/hmr-avatar.png" alt="" width="32" height="32" />
+      <span>همر</span>
     </a>
-    <nav class="nav">
-      <a href="/skill" aria-current={pathname.startsWith("/skill") ? "page" : undefined}>مهارت‌ها</a>
-      {
-        hasPrompts ? (
-          <a href="/prompt" aria-current={pathname.startsWith("/prompt") ? "page" : undefined}>پرامپت متنی</a>
-        ) : (
-          <span class="nav__soon">پرامپت متنی</span>
-        )
-      }
-      <a href="/image-prompt" aria-current={pathname.startsWith("/image-prompt") ? "page" : undefined}>پرامپت تصویر</a>
-      <span class="nav__soon">نرم‌افزار</span>
-      <a class="nav__gh" href="https://github.com/hmrbot/skill-hub" rel="noopener">GitHub</a>
+
+    <nav class="hmr-header__nav">
+      {nav.map(i => <a href={i.href}>{i.label}</a>)}
     </nav>
+
+    <div class="hmr-header__spacer"></div>
+
+    <div class="hmr-header__actions">
+      <button type="button" class="hmr-header__search" aria-label="جستجو" data-ai-search-trigger>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <span>جستجو</span>
+        <kbd><span>⌘</span><span>K</span></kbd>
+      </button>
+      <a class="hmr-header__account" href="/account" data-account>
+        <svg class="hmr-header__account-ic" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6.5 8-6.5s8 2.5 8 6.5"></path></svg>
+        <span class="hmr-header__avatar" data-account-avatar hidden></span>
+        <span data-account-label>ورود</span>
+      </a>
+    </div>
+
+    <button type="button" class="hmr-header__burger" aria-label="منو" aria-expanded="false" data-menu-toggle>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+    </button>
+  </div>
+
+  <div class="hmr-header__panel" data-menu-panel hidden>
+    <div class="hmr-container-wide">
+      <button type="button" class="hmr-header__panel-search" data-ai-search-trigger>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <span>جستجو در همر</span>
+      </button>
+      <a class="hmr-header__panel-account" href="/account" data-account-m>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"></circle><path d="M4 21c0-4 4-6.5 8-6.5s8 2.5 8 6.5"></path></svg>
+        <span data-account-m-label>ورود / حساب کاربری</span>
+      </a>
+      {[...nav, ...extra].map(i => <a href={i.href}>{i.label}</a>)}
+    </div>
   </div>
 </header>
 
-<style>
-  .site-header {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    background: color-mix(in srgb, var(--bg) 82%, transparent);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border);
+<script type="module" is:inline src={`https://${AI_SEARCH_ENDPOINT}/assets/v0.0.25/search-snippet.es.js`}></script>
+<search-modal-snippet
+  api-url={`https://${AI_SEARCH_ENDPOINT}/`}
+  placeholder="جستجو در همر…"
+  theme="dark"
+  shortcut="k"
+  show-url="true"
+  style="--search-snippet-primary-color: var(--hmr-primary-link); --search-snippet-background: var(--hmr-surface-1); --search-snippet-text-color: var(--hmr-text); --search-snippet-border-color: var(--hmr-border);"
+></search-modal-snippet>
+
+<script>
+  const openSearch = () => {
+    const m = document.querySelector('search-modal-snippet');
+    if (m && typeof m.open === 'function') m.open();
+  };
+
+  const btn = document.querySelector('[data-menu-toggle]');
+  const panel = document.querySelector('[data-menu-panel]');
+  const openIcon = 'M6 6l12 12M18 6L6 18';
+  const closedIcon = 'M4 7h16M4 12h16M4 17h16';
+  const closePanel = () => {
+    if (!(btn instanceof HTMLElement) || !(panel instanceof HTMLElement)) return;
+    btn.setAttribute('aria-expanded', 'false');
+    panel.hidden = true;
+    btn.querySelector('path')?.setAttribute('d', closedIcon);
+  };
+
+  if (btn instanceof HTMLElement && panel instanceof HTMLElement) {
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!isOpen));
+      panel.hidden = isOpen;
+      btn.querySelector('path')?.setAttribute('d', isOpen ? closedIcon : openIcon);
+    });
+    panel.querySelectorAll('a').forEach(a => a.addEventListener('click', closePanel));
   }
-  .bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    height: 60px;
-    gap: var(--sp-4);
-  }
-  .brand {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sp-2);
-    color: var(--text);
-    font-weight: 700;
-  }
-  .brand:hover {
-    text-decoration: none;
-  }
-  .brand__mark {
-    display: grid;
-    place-items: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 8px;
-    background: var(--accent);
-    color: var(--on-accent);
-    font-family: var(--mono);
-    font-size: var(--fs-sm);
-    font-weight: 700;
-  }
-  .nav {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-4);
-    font-size: var(--fs-sm);
-  }
-  .nav a {
-    color: var(--text-2);
-  }
-  .nav a:hover,
-  .nav a[aria-current="page"] {
-    color: var(--text);
-    text-decoration: none;
-  }
-  .nav__soon {
-    color: var(--muted);
-    cursor: default;
-  }
-  .nav__soon::after {
-    content: "به‌زودی";
-    margin-inline-start: var(--sp-1);
-    font-size: 0.7em;
-    color: var(--muted);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 1px 5px;
-  }
-  .nav__gh {
-    border-inline-start: 1px solid var(--border);
-    padding-inline-start: var(--sp-4);
-  }
-  @media (max-width: 620px) {
-    .nav__soon {
-      display: none;
+
+  document.querySelectorAll('[data-ai-search-trigger]').forEach(el => el.addEventListener('click', () => {
+    closePanel();
+    openSearch();
+  }));
+
+  // Account chip — hydrated from the `hmr_token` / `hmr_user` keys the
+  // /account page writes (all 5 sites share the hmrbot.com origin).
+  try {
+    const authed = !!localStorage.getItem('hmr_token');
+    const nextParam = '?next=' + encodeURIComponent(location.pathname + location.search);
+    let uname = '';
+    try { const u = JSON.parse(localStorage.getItem('hmr_user') || '{}'); uname = (u.name || u.email || '').trim(); } catch {}
+    const initial = uname ? uname.charAt(0).toUpperCase() : '';
+
+    document.querySelectorAll('[data-account], [data-account-m]').forEach((a) => {
+      a.setAttribute('href', authed ? '/account' : '/account' + nextParam);
+    });
+
+    if (authed) {
+      const desk = document.querySelector('[data-account]');
+      if (desk instanceof HTMLElement) {
+        desk.classList.add('is-authed');
+        desk.title = uname || 'حساب کاربری';
+        const lbl = desk.querySelector('[data-account-label]');
+        const ic = desk.querySelector('.hmr-header__account-ic');
+        const av = desk.querySelector('[data-account-avatar]');
+        if (lbl) lbl.textContent = 'حساب';
+        if (initial && ic instanceof SVGElement && av instanceof HTMLElement) {
+          ic.setAttribute('hidden', '');
+          av.hidden = false;
+          av.textContent = initial;
+        }
+      }
+      const mLbl = document.querySelector('[data-account-m-label]');
+      if (mLbl) mLbl.textContent = uname ? ('حساب کاربری — ' + uname) : 'حساب کاربری';
     }
+  } catch {}
+</script>
+
+<style>
+  /* Author display rules below beat the UA [hidden] rule — restore it so the
+     JS-toggled avatar / icon actually hide. */
+  .hmr-header [hidden] { display: none !important; }
+
+  .hmr-header {
+    position: sticky; top: 0; z-index: 50;
+    background: color-mix(in oklch, var(--hmr-bg) 90%, transparent);
+    backdrop-filter: var(--hmr-blur);
+    border-bottom: 1px solid var(--hmr-border);
+    font-family: var(--hmr-font-fa); color: var(--hmr-text);
+  }
+  .hmr-header__bar { height: var(--hmr-header-h); display: flex; align-items: center; gap: 20px; }
+  .hmr-header__logo { display: flex; align-items: center; gap: 10px; color: var(--hmr-text); flex: none; }
+  .hmr-header__logo img { display: block; border-radius: var(--hmr-radius-lg); }
+  .hmr-header__logo span { font-family: var(--hmr-font-fa); font-weight: 700; font-size: 18px; }
+  .hmr-header__nav { display: flex; align-items: center; gap: 20px; }
+  .hmr-header__nav a { color: var(--hmr-text-3); font-size: var(--hmr-text-sm); white-space: nowrap; }
+  .hmr-header__nav a:hover { color: var(--hmr-text); }
+  .hmr-header__spacer { flex: 1; }
+  .hmr-header__actions { display: flex; align-items: center; gap: 10px; }
+  .hmr-header__search {
+    display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 12px;
+    border-radius: var(--hmr-radius-sm); background: var(--hmr-surface-3);
+    border: 1px solid var(--hmr-border); color: var(--hmr-text-muted);
+    font-family: inherit; font-size: var(--hmr-text-xs); cursor: pointer;
+  }
+  .hmr-header__search:hover { border-color: var(--hmr-border-3); color: var(--hmr-text); }
+  .hmr-header__search kbd {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--hmr-font-en); font-size: var(--hmr-text-3xs); padding: 1px 6px;
+    border-radius: 4px; background: var(--hmr-surface-2); border: 1px solid var(--hmr-border-3); color: var(--hmr-text-dim);
+  }
+  .hmr-header__account {
+    display: flex; align-items: center; gap: 7px; height: 34px; padding: 0 12px;
+    border-radius: var(--hmr-radius-sm); background: var(--hmr-surface-3);
+    border: 1px solid var(--hmr-border); color: var(--hmr-text-2);
+    font-size: var(--hmr-text-xs); white-space: nowrap;
+  }
+  .hmr-header__account:hover { border-color: var(--hmr-border-3); color: var(--hmr-text); }
+  .hmr-header__account.is-authed { padding: 0 10px; }
+  .hmr-header__avatar {
+    width: 22px; height: 22px; flex: none; border-radius: var(--hmr-radius-pill);
+    display: flex; align-items: center; justify-content: center;
+    background: var(--hmr-primary-a20); color: var(--hmr-primary-soft);
+    font-family: var(--hmr-font-en); font-weight: 700; font-size: var(--hmr-text-3xs);
+  }
+  .hmr-header__burger {
+    display: none; width: 40px; height: 40px; align-items: center; justify-content: center;
+    border-radius: var(--hmr-radius-md); background: var(--hmr-surface-3);
+    border: 1px solid var(--hmr-border-3); color: var(--hmr-text); cursor: pointer;
+  }
+  .hmr-header__panel { border-top: 1px solid var(--hmr-border); background: var(--hmr-surface-1); padding: 16px 0 22px; }
+  .hmr-header__panel a { display: block; padding: 13px 12px; border-radius: var(--hmr-radius-md); color: var(--hmr-text-2); font-size: 16px; }
+  .hmr-header__panel a:hover { background: var(--hmr-surface-3); }
+  .hmr-header__panel .hmr-header__panel-account { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; color: var(--hmr-text); }
+  .hmr-header__panel-search {
+    display: flex; align-items: center; gap: 10px; width: 100%; margin-bottom: 6px;
+    padding: 13px 12px; border-radius: var(--hmr-radius-md);
+    background: var(--hmr-surface-3); border: 1px solid var(--hmr-border-3);
+    color: var(--hmr-text-2); font-family: inherit; font-size: 16px; cursor: pointer;
+  }
+  .hmr-header__panel-search:hover { color: var(--hmr-text); }
+
+  @media (max-width: 900px) {
+    .hmr-header__nav, .hmr-header__actions { display: none; }
+    .hmr-header__burger { display: inline-flex; }
+  }
+  @media (min-width: 901px) {
+    .hmr-header__panel { display: none; }
   }
 </style>

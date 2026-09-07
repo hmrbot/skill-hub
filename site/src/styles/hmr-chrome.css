@@ -1,0 +1,89 @@
+/* HMR shared chrome tokens + helpers — mirrors site-landingPage's tokens.css :root
+   and the container classes from components.css. Imported by Base.astro so the
+   shared Header.astro / Footer.astro resolve. Keep in sync with site-landingPage. */
+
+:root {
+  /* ---- Surfaces (dark theme, the only theme) ---- */
+  --hmr-bg:            oklch(9.5% 0.015 264);   /* page background            #0a0d14 */
+  --hmr-surface-1:     oklch(12% 0.014 264);    /* filter bars, mobile panel  #0f131b */
+  --hmr-surface-2:     oklch(15% 0.012 264);    /* cards, inputs              #141821 */
+  --hmr-surface-3:     oklch(20% 0.010 264);    /* raised cards, chips        #1d222b */
+
+  /* ---- Borders ---- */
+  --hmr-border:        oklch(20% 0.012 264);    /* section dividers */
+  --hmr-border-2:      oklch(23% 0.012 264);    /* card borders */
+  --hmr-border-3:      oklch(27% 0.010 264);    /* input borders */
+
+  /* ---- Text ---- */
+  --hmr-text:          oklch(94% 0.010 264);    /* primary  */
+  --hmr-text-2:        oklch(85% 0.010 264);    /* body copy in articles */
+  --hmr-text-3:        oklch(82% 0.012 264);    /* nav links */
+  --hmr-text-muted:    oklch(68% 0.010 264);    /* secondary */
+  --hmr-text-dim:      oklch(62% 0.008 264);    /* meta, timestamps */
+
+  /* ---- Brand blue ---- */
+  --hmr-primary:       oklch(58.9% 0.224 263);  /* buttons, active states */
+  --hmr-primary-link:  oklch(65.2% 0.185 262);  /* links, icon buttons */
+  --hmr-primary-hover: oklch(73.3% 0.138 259);  /* link hover */
+  --hmr-primary-soft:  oklch(85.0% 0.076 254);  /* text on tinted chips */
+  --hmr-primary-a12:   oklch(58.9% 0.224 263 / 0.12);
+  --hmr-primary-a14:   oklch(58.9% 0.224 263 / 0.14);
+  --hmr-primary-a20:   oklch(58.9% 0.224 263 / 0.20);
+  --hmr-primary-a40:   oklch(58.9% 0.224 263 / 0.40);
+  --hmr-primary-a80:   oklch(58.9% 0.224 263 / 0.80);
+
+  /* ---- Radii ---- */
+  --hmr-radius-sm:     0.375rem;  /* 6px  — buttons, inputs, code blocks */
+  --hmr-radius-md:     0.5rem;    /* 8px  — mobile menu rows, lang toggle */
+  --hmr-radius-lg:     0.625rem;  /* 10px — cards, panels, images */
+  --hmr-radius-xl:     0.75rem;   /* 12px — library switcher shell */
+  --hmr-radius-pill:   9999px;
+
+  /* ---- Type ---- */
+  --hmr-font-fa: Vazirmatn, Rubik, system-ui, sans-serif;  /* all Persian UI + body */
+  --hmr-font-en: Rubik, sans-serif;                        /* latin, numerals, code, slugs */
+
+  /* Fluid heading scale — clamp(min, vw, max) */
+  --hmr-h1:            clamp(26px, 6.4vw, 46px);
+  --hmr-h1-page:       clamp(26px, 5.0vw, 36px);  /* library/list page titles */
+  --hmr-h2:            clamp(20px, 4.7vw, 34px);
+  --hmr-h2-article:    clamp(20px, 3.6vw, 26px);
+  --hmr-h3:            clamp(15px, 2.4vw, 19px);
+
+  /* Fixed sizes */
+  --hmr-text-lead:     18px;   /* hero subline */
+  --hmr-text-body:     17px;   /* article body */
+  --hmr-text-base:     15px;
+  --hmr-text-sm:       14px;
+  --hmr-text-xs:       13px;
+  --hmr-text-2xs:      12px;
+  --hmr-text-3xs:      11px;
+
+  /* ---- Fluid section spacing ---- */
+  --hmr-section-lg:    clamp(44px, 8vw, 88px);   /* major sections */
+  --hmr-section-md:    clamp(36px, 7vw, 72px);
+  --hmr-section-sm:    clamp(26px, 5vw, 44px);   /* page headers */
+  --hmr-gutter:        clamp(16px, 4vw, 24px);   /* horizontal page padding */
+
+  /* ---- Layout ---- */
+  --hmr-max-content:   1152px;  /* landing, blog, legal */
+  --hmr-max-wide:      1400px;  /* library pages, header */
+  --hmr-max-prose:     820px;   /* legal pages */
+  --hmr-header-h:      64px;
+  --hmr-sidebar-w:     260px;
+
+  /* ---- Effects ---- */
+  --hmr-shadow-card:   0 24px 48px oklch(9% 0.03 264 / 0.55);
+  --hmr-blur:          blur(12px);
+  --hmr-glow:          oklch(58.9% 0.224 263 / 0.13);  /* hero radial, blur(140px) */
+
+  /* ---- Breakpoints (for reference; use in media queries) ---- */
+  /* mobile nav / hamburger:      max-width: 900px */
+  /* sidebar & TOC accordion:     max-width: 860px */
+}
+
+.hmr-container      { max-width: var(--hmr-max-content); margin: 0 auto; padding: 0 var(--hmr-gutter); }
+.hmr-container-wide { max-width: var(--hmr-max-wide);    margin: 0 auto; padding: 0 var(--hmr-gutter); }
+
+/* hub's global.css underlines links on hover; the shared chrome never does */
+.hmr-header a:hover, .hmr-footer a:hover { text-decoration: none; }

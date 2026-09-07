@@ -1,43 +1,101 @@
 ---
-const year = new Date().getFullYear();
----
+// src/components/Footer.astro — shared site footer, used by every page via HmrLayout
+// (the homepage included, since 2026-09-07).
+// Mirrored across all 5 sites; only the logo asset path is site-specific.
+const social = [
+  { key: 'x',        href: '#', label: 'X' },
+  { key: 'telegram', href: '#', label: 'Telegram' },
+  { key: 'youtube',  href: '#', label: 'YouTube' },
+];
 
-<footer class="site-footer">
-  <div class="wrap inner">
-    <p>
-      hmrbot Hub — کتابخانهٔ باز مهارت‌ها. محتوا با لایسنس
-      <a href="https://github.com/hmrbot/skill-hub/blob/main/LICENSE" rel="noopener">Apache-2.0</a>.
-    </p>
-    <p class="links">
-      <a href="/skill">مهارت‌ها</a>
-      <a href="/registry.json">registry.json</a>
-      <a href="/llms.txt">llms.txt</a>
-      <a href="https://github.com/hmrbot/skill-hub" rel="noopener">مخزن</a>
-    </p>
-    <p class="fine">© {year} hmrbot · ساخته‌شده با Astro</p>
+const nav = [
+  { href: 'https://blog.hmrbot.com',   label: 'وبلاگ' },
+  { href: 'https://ai.hmrbot.com',     label: 'ابزارها' },
+  { href: 'https://hub.hmrbot.com',    label: 'مخزن' },
+  { href: 'https://hmrbot.com/about/', label: 'درباره ما' },
+];
+---
+<footer class="hmr-footer" dir="rtl">
+  <div class="hmr-container">
+    <div class="hmr-footer__top">
+      <nav class="hmr-footer__nav">
+        {nav.map(i => <a href={i.href}>{i.label}</a>)}
+      </nav>
+
+      <p class="hmr-footer__about">همر تلاش می‌کند راهی برای استفاده کاربردی از هوش مصنوعی در زندگی واقعی باشد؛ از کار و تحصیل تا سلامت، خلاقیت و زندگی روزمره، تا هوش مصنوعی را به ابزاری برای بهتر زندگی کردن تبدیل کنیم.</p>
+
+      <div class="hmr-footer__brand">
+        <a class="hmr-footer__logo" href="https://hmrbot.com">
+          <img src="/assets/hmr-avatar.png" alt="" width="32" height="32" />
+          <span>همر</span>
+        </a>
+        <div class="hmr-footer__slogan">هوش مصنوعی راه پیشرفت</div>
+        <div class="hmr-footer__social">
+          <a href={social[0].href} aria-label="X" title="X">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.1 8.1L23 22h-6.6l-5.2-6.8L5.2 22H2l7.6-8.7L1.7 2h6.8l4.7 6.2L18.9 2Zm-1.2 18h1.8L7.4 3.9H5.5L17.7 20Z"></path></svg>
+          </a>
+          <a href={social[1].href} aria-label="Telegram" title="Telegram">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="m21.9 4.3-3 14.1c-.2 1-.8 1.2-1.6.8l-4.5-3.3-2.2 2.1c-.2.2-.5.4-.9.4l.3-4.6 8.3-7.5c.4-.3-.1-.5-.6-.2L7.4 12.6 3 11.2c-1-.3-1-1 .2-1.5l17.2-6.6c.8-.3 1.5.2 1.5 1.2Z"></path></svg>
+          </a>
+          <a href={social[2].href} aria-label="YouTube" title="YouTube">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M22.5 7.2a2.8 2.8 0 0 0-2-2C18.8 4.8 12 4.8 12 4.8s-6.8 0-8.5.4a2.8 2.8 0 0 0-2 2C1.2 8.9 1.2 12 1.2 12s0 3.1.3 4.8a2.8 2.8 0 0 0 2 2c1.7.4 8.5.4 8.5.4s6.8 0 8.5-.4a2.8 2.8 0 0 0 2-2c.3-1.7.3-4.8.3-4.8s0-3.1-.3-4.8ZM9.9 15.3V8.7l5.6 3.3-5.6 3.3Z"></path></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="hmr-footer__bar"><a href="https://hmrbot.com">HMR</a>@2026©</div>
   </div>
 </footer>
 
 <style>
-  .site-footer {
-    border-top: 1px solid var(--border);
-    background: var(--bg-2);
-    padding-block: var(--sp-8);
-    font-size: var(--fs-sm);
-    color: var(--text-2);
+  .hmr-footer {
+    padding: clamp(36px, 7vw, 64px) 0 28px;
+    background: var(--hmr-bg); border-top: 1px solid var(--hmr-border);
+    font-family: var(--hmr-font-fa); color: var(--hmr-text);
   }
-  .inner {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-2);
+  .hmr-footer .hmr-container { display: flex; flex-direction: column; gap: 28px; }
+
+  /* three zones: brand (right in RTL) · about (center) · nav (left) */
+  .hmr-footer__top {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    gap: 32px 56px; flex-wrap: wrap;
   }
-  .links {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--sp-4);
+
+  .hmr-footer__brand { display: flex; flex-direction: column; gap: 14px; flex: none; }
+  .hmr-footer__logo { display: flex; align-items: center; gap: 10px; color: var(--hmr-text); }
+  .hmr-footer__logo img { display: block; }
+  .hmr-footer__logo span { font-family: var(--hmr-font-fa); font-weight: 700; font-size: 17px; }
+  .hmr-footer__slogan { font-size: var(--hmr-text-xs); color: var(--hmr-text-muted); }
+  .hmr-footer__social { display: flex; gap: 10px; margin-top: 6px; }
+  .hmr-footer__social a {
+    width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+    border-radius: var(--hmr-radius-lg); background: var(--hmr-surface-3);
+    border: 1px solid var(--hmr-border-2); color: var(--hmr-text-3);
   }
-  .fine {
-    color: var(--muted);
-    margin: 0;
+  .hmr-footer__social a:hover { border-color: var(--hmr-primary-a80); color: var(--hmr-text); }
+
+  .hmr-footer__about {
+    margin: 0; flex: 1 1 300px; max-width: 440px;
+    font-size: var(--hmr-text-sm); line-height: 1.95; color: var(--hmr-text-muted); text-align: right;
+  }
+
+  .hmr-footer__nav { display: flex; flex-direction: column; gap: 14px; flex: none; text-align: right; }
+  .hmr-footer__nav a { font-size: var(--hmr-text-sm); color: var(--hmr-text-muted); }
+  .hmr-footer__nav a:hover { color: var(--hmr-text); }
+
+  .hmr-footer__bar {
+    padding-top: 22px; border-top: 1px solid var(--hmr-border); text-align: center;
+    direction: ltr;
+    font-family: var(--hmr-font-en); font-size: var(--hmr-text-xs); color: var(--hmr-text-dim);
+  }
+  .hmr-footer__bar a { color: inherit; }
+  .hmr-footer__bar a:hover { color: var(--hmr-text-2); }
+
+  @media (max-width: 760px) {
+    .hmr-footer__top { flex-direction: column; align-items: center; text-align: center; gap: 28px; }
+    .hmr-footer__brand { align-items: center; }
+    .hmr-footer__about { text-align: center; flex-basis: auto; }
+    .hmr-footer__nav { align-items: center; text-align: center; }
   }
 </style>
